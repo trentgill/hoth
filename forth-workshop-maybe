@@ -1,0 +1,75 @@
+extending on:
+https://github.com/recursecenter/wiki/wiki/Forth-Implementation
+
+implementing forth:
+
+two big parts that could each be a week long project. 1: getting the interpreter running in a repl. 2: compiling forth words into your dictionary.
+
+part one is solely about the following forth sentence:
+
+"5 DUP * . BYE"
+
+it squares the number 5 and print the result (25) to the terminal.
+
+first steps:
+- consider the stack. how can it be implemented in your language
+	asm has it built in conceptually
+	C you can allocate some memory & save a pointer
+	haskell.. good luck!
+- nb: the stack can contain anything (numbers, strings, flags, tokens)
+
+
+- hardcode each of the 5 forth words in the sentence.
+	5 		pushes the number 5 to the stack
+	DUP 	duplicates the value on the top of the stack
+	*		pops 2 values from stack and pushes their product
+	.		pops the top of stack and prints it to terminal
+	BYE		exits the forth
+> these are like functions.. but they're 'words'
+> try calling each one directly with test data on the stack
+
+- write a main loop that executes these 4 words in series
+	requires a 'program counter'
+	consider 'next' keyword
+	forth's `INIT`
+
+- now we want to change the sentence above to:
+
+"5 SQUARED ."
+
+wrap 'DUP *' into a forth word called 'SQUARED'
+	SQUARED should execute DUP then *
+	this is a 'composite' word that we are *hand compiling*
+	implement the ability to call `SQUARED` in the same manner as the other words >> the helper to make this work is called 'DOCOLON'
+	keyword 'return stack'
+
+- you have some native words, and a single composite word compiled by hand!
+
+
+// the interpreter
+our forth currently only runs the words we define in our main function. in order to allow our program to do different things, we need to take a variable list of commands.
+
+we need to implement `INTERPRET` which is itself made of forth words:
+
+: INTERPRET ( -- )
+  BL WORD FIND
+  IF EXECUTE
+  ELSE >NUMBER
+  THEN
+;
+
+- for now we won't implement this directly, but instead build the consituent parts. the functionality is:
+	`BL WORD` parses input string until `BL` is encountered, and push the parsed word onto the stack
+	`FIND` search the dictionary for the word on the stack. push the 'execution token' of that word onto the stack if it's found, 
+	`IF EXECUTE` 
+
+
+// on the command line
+now we need some infrastructure so we can run more than one sentence. `QUIT` is the outermost interpreter loop. it does 4 things:
+	empty the return stack
+		`ACCEPT` a line of input from the terminal
+		`INTERPRET` which is itself a loop that interprets the ACCEPTed line
+		Repeat from `ACCEPT`
+
+- you'll need to add some IO to your application via stdin/out or your languages console io
+
