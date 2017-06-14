@@ -35,3 +35,5 @@ fPOP top stack = case of stackEmpty in
   True -> putStrLn "Stack underflow"
   False -> (fst stack, snd stack)
   let stackEmpty = top == () --can't pop the top!
+--unsafe version below
+--fPOP _ stack = (fst stack, snd stack)
