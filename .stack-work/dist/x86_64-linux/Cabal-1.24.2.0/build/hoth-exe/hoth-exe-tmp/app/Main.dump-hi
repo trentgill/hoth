@@ -1,0 +1,168 @@
+
+==================== FINAL INTERFACE ====================
+2017-06-14 04:34:17.015981 UTC
+
+interface main@main:Main 8002
+  interface hash: fcb605d1b860cba80f8f39d905120549
+  ABI hash: 05d1af13fe6a8d26a2287c904c6eb491
+  export-list hash: 91a3df12e587c5f3338be40219fbf2bf
+  orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
+  flag hash: 796527848cbe51e75f9efc835d6e464f
+  sig of: Nothing
+  used TH splices: False
+  where
+exports:
+  Main.fWORD
+  Main.main
+module dependencies:
+package dependencies: array-0.5.1.1@array-0.5.1.1 base-4.9.1.0*
+                      binary-0.8.3.0@binary-0.8.3.0
+                      bytestring-0.10.8.1@bytestring-0.10.8.1
+                      containers-0.5.7.1@containers-0.5.7.1
+                      deepseq-1.4.2.0@deepseq-1.4.2.0 ghc-prim-0.5.0.0
+                      hoth-0.1.0.0@hoth-0.1.0.0-9kGQoXeTs5nH2901Kk1dfG
+                      integer-gmp-1.0.0.1 mtl-2.2.1@mtl-2.2.1-BLKBelFsPB3BoFeSWSOYj6
+                      parsec-3.1.11@parsec-3.1.11-113irVHGgd88sRnywByDNw
+                      text-1.2.2.1@text-1.2.2.1-Ji7hMs2U4BkBwavd4taEVR
+                      transformers-0.5.2.0@transformers-0.5.2.0
+orphans: base-4.9.1.0:GHC.Base base-4.9.1.0:GHC.Float
+         binary-0.8.3.0@binary-0.8.3.0:Data.Binary.Generic
+         bytestring-0.10.8.1@bytestring-0.10.8.1:Data.ByteString.Builder
+         text-1.2.2.1@text-1.2.2.1-Ji7hMs2U4BkBwavd4taEVR:Data.Text
+         text-1.2.2.1@text-1.2.2.1-Ji7hMs2U4BkBwavd4taEVR:Data.Text.Lazy
+         text-1.2.2.1@text-1.2.2.1-Ji7hMs2U4BkBwavd4taEVR:Data.Text.Show
+         transformers-0.5.2.0@transformers-0.5.2.0:Control.Monad.Trans.Error
+family instance modules: base-4.9.1.0:Control.Applicative
+                         base-4.9.1.0:Data.Complex base-4.9.1.0:Data.Either
+                         base-4.9.1.0:Data.Functor.Const base-4.9.1.0:Data.Functor.Identity
+                         base-4.9.1.0:Data.List.NonEmpty base-4.9.1.0:Data.Monoid
+                         base-4.9.1.0:Data.Semigroup base-4.9.1.0:Data.Type.Equality
+                         base-4.9.1.0:Data.Version base-4.9.1.0:Data.Void
+                         base-4.9.1.0:GHC.Exts base-4.9.1.0:GHC.Generics
+                         base-4.9.1.0:GHC.IO.Exception base-4.9.1.0:GHC.TypeLits
+                         containers-0.5.7.1@containers-0.5.7.1:Data.IntMap.Base
+                         containers-0.5.7.1@containers-0.5.7.1:Data.IntSet.Base
+                         containers-0.5.7.1@containers-0.5.7.1:Data.Map.Base
+                         containers-0.5.7.1@containers-0.5.7.1:Data.Sequence
+                         containers-0.5.7.1@containers-0.5.7.1:Data.Set.Base
+                         text-1.2.2.1@text-1.2.2.1-Ji7hMs2U4BkBwavd4taEVR:Data.Text
+                         text-1.2.2.1@text-1.2.2.1-Ji7hMs2U4BkBwavd4taEVR:Data.Text.Lazy
+import  -/  base-4.9.1.0:Control.Monad a6784c5dab0d75c63dabec5a37843f98
+import  -/  base-4.9.1.0:Data.Foldable 3e0b6967a1da89945d0e2d47266337a2
+import  -/  base-4.9.1.0:Data.List 07ae2acca6538aa0800bd0a993ac6ac1
+import  -/  base-4.9.1.0:GHC.Base c4231c43c07e46080a26bf94094c7aa1
+import  -/  base-4.9.1.0:GHC.List ab8c4e523e6c479c549d3bcd5fc4a439
+import  -/  base-4.9.1.0:GHC.Num 00bfaa7b2f9d6084913c0697a8a49ec8
+import  -/  base-4.9.1.0:Prelude 22dd289b8469a8fa8dc81cab7b237771
+import  -/  base-4.9.1.0:System.Environment 08cb808e8e6a7821e6f8cfa76a977431
+import  -/  base-4.9.1.0:System.IO e4a64a8e3dce8616da54f0ee7104f7db
+import  -/  ghc-prim-0.5.0.0:GHC.Classes 0bdf3d057a415ec1b84a7b1994efbe47
+import  -/  ghc-prim-0.5.0.0:GHC.Types 89f8de4f08018c9177c98d979eae0e45
+import  -/  hoth-0.1.0.0@hoth-0.1.0.0-9kGQoXeTs5nH2901Kk1dfG:Lib a6d8ae1fdfc9f4a6de6b05be48b2c640
+import  -/  parsec-3.1.11@parsec-3.1.11-113irVHGgd88sRnywByDNw:Text.ParserCombinators.Parsec 09138eb929906f6c6f6f40463cb9c077
+d6831ef04cb9301b090dfae6f7bb7ec7
+  $trModule :: GHC.Types.Module
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.Module Main.$trModule2 Main.$trModule1) -}
+847d9fc3b8e6f0b424199f36b4999bb2
+  $trModule1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS "Main"#) -}
+24ef6042833e75ffd7aa98b83ecca98d
+  $trModule2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS "main"#) -}
+cff0133d81624a35c917897490e214b8
+  $wfWORD ::
+    GHC.Types.Char
+    -> GHC.Base.String -> (# GHC.Base.String, GHC.Base.String #)
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,U(U)><L,U>, Inline: [0],
+     Unfolding: (\ (w :: GHC.Types.Char) (w1 :: GHC.Base.String) ->
+                 let {
+                   word :: [GHC.Types.Char]
+                   = GHC.List.takeWhile
+                       @ GHC.Types.Char
+                       (\ (ds :: GHC.Types.Char) -> GHC.Classes.neChar ds w)
+                       w1
+                 } in
+                 (# word,
+                    case GHC.List.$wlenAcc @ GHC.Types.Char word 0# of ww2 { DEFAULT ->
+                    let {
+                      x :: GHC.Prim.Int# = GHC.Prim.+# 1# ww2
+                    } in
+                    case GHC.Prim.tagToEnum#
+                           @ GHC.Types.Bool
+                           (GHC.Prim.<=# x 0#) of wild {
+                      GHC.Types.False -> Main.$wunsafeDrop @ GHC.Types.Char x w1
+                      GHC.Types.True -> w1 } } #)) -}
+a7fcd793b8606cac7211ca5df5b1d36e
+  $wunsafeDrop :: GHC.Prim.Int# -> [a1] -> [a1]
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,1*U><S,1*U>,
+     Inline: [0] -}
+4edbef0a441ca129f8b9c50f7c812083
+  fWORD ::
+    GHC.Types.Char
+    -> GHC.Base.String -> (GHC.Base.String, GHC.Base.String)
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,U(U)><L,U>m,
+     Inline: INLINE[0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Types.Char) (w1 :: GHC.Base.String) ->
+                 case Main.$wfWORD w w1 of ww { (#,#) ww1 ww2 -> (ww1, ww2) }) -}
+eea3f7f2fe84541ffbe479b69ac233d4
+  main :: GHC.Types.IO ()
+  {- Arity: 1, Strictness: <S,U>,
+     Unfolding: InlineRule (0, True, True)
+                Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R)) -}
+7b1b2e3e10cf6545feaf1ec04776b922
+  main1 ::
+    GHC.Prim.State# GHC.Prim.RealWorld
+    -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
+  {- Arity: 1, Strictness: <S,U>,
+     Unfolding: (\ (s :: GHC.Prim.State# GHC.Prim.RealWorld)[OneShot] ->
+                 case System.Environment.getArgs1 s of ds1 { (#,#) ipv ipv1 ->
+                 case ipv1 of wild {
+                   []
+                   -> GHC.Prim.raiseIO#
+                        @ GHC.Exception.SomeException
+                        @ ()
+                        Main.main2
+                        ipv
+                   : expr ds
+                   -> GHC.IO.Handle.Text.hPutStr2
+                        GHC.IO.Handle.FD.stdout
+                        expr
+                        GHC.Types.True
+                        ipv } }) -}
+b5766d983193e8bb4467dbe142bbe5a8
+  main2 :: GHC.Exception.SomeException
+  {- Unfolding: (GHC.IO.Exception.$fExceptionIOException_$ctoException
+                   Main.main3) -}
+7bd9636e84811445386d5ecd2235f23b
+  main3 :: GHC.IO.Exception.IOException
+  {- Unfolding: (GHC.IO.Exception.IOError
+                   (GHC.Base.Nothing @ GHC.IO.Handle.Types.Handle)
+                   GHC.IO.Exception.UserError
+                   (GHC.Types.[] @ GHC.Types.Char)
+                   Main.main4
+                   (GHC.Base.Nothing @ Foreign.C.Types.CInt)
+                   (GHC.Base.Nothing @ GHC.IO.FilePath)) -}
+dd6cdcab81ff84731ecd7c80d9d4096f
+  main4 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   "Pattern match failure in do expression at app/Main.hs:11:3-10"#) -}
+5109cc8798b3ae906593f527439ba811
+  main5 ::
+    GHC.Prim.State# GHC.Prim.RealWorld
+    -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
+  {- Arity: 1,
+     Unfolding: (GHC.TopHandler.runMainIO1
+                   @ ()
+                   Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R))) -}
+vectorised variables:
+vectorised tycons:
+vectorised reused tycons:
+parallel variables:
+parallel tycons:
+trusted: safe
+require own pkg trusted: False
+
