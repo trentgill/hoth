@@ -3,17 +3,23 @@ https://github.com/recursecenter/wiki/wiki/Forth-Implementation
 
 implementing forth:
 
-two big parts that could each be a week long project. 1: getting the interpreter running in a repl. 2: compiling forth words into your dictionary.
+two big parts that could each be a week long project.
+	1: getting the interpreter running in a repl.
+	2: compiling forth words into your dictionary.
 
 part one is solely about the following forth sentence:
 
 "5 DUP * . BYE"
 
-it squares the number 5 and print the result (25) to the terminal.
+: push 5 on the stack				<5>
+: duplicate top of the stack 		<5,5>
+: multiply top 2 elements of stack 	<25>
+: pop top of stack and print 		<>	;"25"
+: exit program
 
 first steps:
 - consider the stack. how can it be implemented in your language
-	asm has it built in conceptually
+	asm has it built in conceptually. 'ebp' register is your friend
 	C you can allocate some memory & save a pointer
 	haskell.. good luck!
 - nb: the stack can contain anything (numbers, strings, flags, tokens)
@@ -30,20 +36,23 @@ first steps:
 
 - write a main loop that executes these 4 words in series
 	requires a 'program counter'
-	consider 'next' keyword
+	consider 'next' keyword (called at end of each word, to use program counter)
 	forth's `INIT`
 
+
+
+// Composite words
 - now we want to change the sentence above to:
 
 "5 SQUARED ."
 
 wrap 'DUP *' into a forth word called 'SQUARED'
 	SQUARED should execute DUP then *
-	this is a 'composite' word that we are *hand compiling*
+	this is a 'composite' word that we are *hand compiling* (so we don't need a compiler yet)
 	implement the ability to call `SQUARED` in the same manner as the other words >> the helper to make this work is called 'DOCOLON'
-	keyword 'return stack'
+	how to handle the context switch to the composite word and back
 
-- you have some native words, and a single composite word compiled by hand!
+goal: you have some native words, and a single composite word compiled by hand!
 
 
 // the interpreter
@@ -59,15 +68,17 @@ we need to implement `INTERPRET` which is itself made of forth words:
 ;
 
 - for now we won't implement this directly, but instead build the consituent parts. the functionality is:
-	`BL WORD` parses input string until `BL` is encountered, and push the parsed word onto the stack
-	`FIND` search the dictionary for the word on the stack. push the 'execution token' of that word onto the stack if it's found, 
-	`IF EXECUTE` 
+	`BL WORD` parses input string until `BL` is encountered, and push the parsed word onto the stack (error if can't parse)
+	`FIND` search the dictionary for the word on the stack. push the 'execution token' of that word onto the stack if it's found, & a flag
+	`IF EXECUTE` flag is set, so 'execute' the word that was found
+	`ELSE >NUMBER` if word isn't found, treat as a number literal (error if string is non-numeric)
+	`THEN` is the continuation.
 
 
 // on the command line
 now we need some infrastructure so we can run more than one sentence. `QUIT` is the outermost interpreter loop. it does 4 things:
 	empty the return stack
-		`ACCEPT` a line of input from the terminal
+		`ACCEPT` a line of input from the terminal (ie. wait for user input in a repl)
 		`INTERPRET` which is itself a loop that interprets the ACCEPTed line
 		Repeat from `ACCEPT`
 
