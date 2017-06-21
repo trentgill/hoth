@@ -7,11 +7,14 @@ import Data.List
 
 main :: IO ()
 main = do
-    print (fSQUARED  -- 7,5
-         . fSEVEN   -- 7
-         $ [] :: FStack)
-    --(expr:_) <- getArgs
-    --putStrLn (expr)
+    -- take the terminal input ()
+    print (fSQUARED      -- 49
+         . fSEVEN        -- 7
+         $ [] :: FStack) -- empty stack
+    name <- getLine
+    putStrLn (name)
+    main
+    
 
 
 -- TYPES
@@ -21,27 +24,66 @@ main = do
     -- Program Counter
     -- Compile Flag
     -- Input string
+    -- Print string
     -- Dictionary(?)
+
+-- empty stack & string to be interp'd
+initState = FState [] "5 SQUARED BYE"
+
+data FState =
+    FState { stack :: FStack
+           , instr :: FInput }
+
+-- Input String (type alias)
+type FInput = String
 
 
 -- Data Stack
+-- type alias, not an ADT
+type FStack = [FStackItem]
+
 -- define all the things that can be elements of the stack
 data FStackItem = FNum Integer
                 | FStr String
                 deriving (Eq, Ord, Read)
--- type alias, not an ADT
-type FStack = [FStackItem]
 
 instance Show FStackItem where
     show (FNum x) = show x
     show (FStr x) = x
 
---instance Num FStackItem where
-    --(*) (FNum x, FNum y) = x * y
-
 
 
 -- DICTIONARY
+
+--fDOLITERAL :: FPC -> FStack -> FStack
+--fDOT
+--fBYE
+
+--fQUIT
+--fACCEPT
+--fINTERPRET :: FState -> FStack
+--fINTERPRET stk instr = (FStr "3") : stk
+
+--fWORD
+--fFIND
+--fIF, fELSE, fTHEN
+--fQBRANCH, fBRANCH
+--fEXECUTE
+--fABORT
+
+--fCOLON
+--fSEMICOLON
+
+
+--exercise: implement these
+--Return stack operations: R> >R R@
+--Arithmetic/bitwise operations: MOD NEGATE OR AND INVERT XOR LSHIFT RSHIFT
+--Simple math: ABS
+--Comparators: = < <= > >= <>
+--Memory access: ! @ +! MOVE FILL
+--Console I/O: KEY EMIT
+
+--LITERALS / CONSTANTS
 fFIVE :: FStack -> FStack
 fFIVE st = (FNum 5):st
 
@@ -50,6 +92,8 @@ fSEVEN st = (FNum 7):st
 
 fBL :: FStack -> FStack
 fBL st = (FStr " "):st
+
+
 
 --MATH FUNCTIONS
 fSTAR :: FStack -> FStack
@@ -71,6 +115,7 @@ fMIN :: FStack -> FStack
 fMIN (s:st:stk) = min s st : stk
 
 
+
 --PRINTING
 fDOT :: FStack -> FStack
 fDOT []      = []
@@ -79,6 +124,8 @@ fDOT []      = []
 fTONUM :: FStack -> FStack
 fTONUM ((FStr s):st) = (read s):st
 -- protect against non-numerals..
+
+
 
 --STACK MODIFIERS
 fDUP :: FStack -> FStack
@@ -116,10 +163,17 @@ fTUCK (tos:[])      = tos:tos:[]
 fTUCK (tos:nxt:stk) = tos:nxt:tos:stk
 
 
+
 --COMPOSITE WORDS (hand compiled)
 fSQUARED :: FStack -> FStack
 fSQUARED stk = fSTAR . fDUP $ stk
 
+--fINIT :: FStack -> FStack
+--fINIT stk = fBYE
+--          . fSQUARED
+--          . 42
+--          . DOLITERAL
+--          $ stk
 
 --fQDUP :: FStack -> FStack
 --fQDUP ((FNum s):st)
