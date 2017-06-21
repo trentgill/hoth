@@ -7,15 +7,27 @@ import Data.List
 
 main :: IO ()
 main = do
-    -- take the terminal input ()
-    print (fSQUARED      -- 49
-         . fSEVEN        -- 7
-         $ [] :: FStack) -- empty stack
-    name <- getLine
-    putStrLn (name)
+    interpret_this <- getLine
+    print(fINTERPRET interpret_this)
     main
     
 
+fINTERPRET :: String -> String
+fINTERPRET []  = ??
+fINTERPRET str = 
+
+
+--fWORD :: FStack -> FStack
+--fWORD (delim:inStr:st) = (word, shortstr)
+  --where word           = takeWhile (/= delim) (inStr)
+        --shortstr       = drop (1 + length word) inStr
+
+
+
+    --print (fSQUARED      -- 49
+    --     . fSEVEN        -- 7
+    --     $ [] :: FStack) -- empty stack
+    ----putStrLn (name)
 
 -- TYPES
 -- Forth State
@@ -181,7 +193,3 @@ fSQUARED stk = fSTAR . fDUP $ stk
 --    | otherwise = s:st
 
 
---fWORD :: FStack -> FStack
---fWORD (delim:inStr:st) = (word, shortstr)
-  --where word           = takeWhile (/= delim) (inStr)
-        --shortstr       = drop (1 + length word) inStr
