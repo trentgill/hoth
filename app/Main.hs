@@ -8,20 +8,9 @@ import Data.List
 main :: IO ()
 main = do
     interpret_this <- getLine
-    print(fINTERPRET interpret_this)
+    print(fINTERPRET interpret_this [])
     main
     
-
-fINTERPRET :: String -> String
-fINTERPRET []  = ??
-fINTERPRET str = 
-
-
---fWORD :: FStack -> FStack
---fWORD (delim:inStr:st) = (word, shortstr)
-  --where word           = takeWhile (/= delim) (inStr)
-        --shortstr       = drop (1 + length word) inStr
-
 
 
     --print (fSQUARED      -- 49
@@ -40,11 +29,11 @@ fINTERPRET str =
     -- Dictionary(?)
 
 -- empty stack & string to be interp'd
-initState = FState [] "5 SQUARED BYE"
+-- initState = FState [] "5 SQUARED BYE"
 
-data FState =
-    FState { stack :: FStack
-           , instr :: FInput }
+--data FState =
+--    FState { stack :: FStack
+--           , instr :: FInput }
 
 -- Input String (type alias)
 type FInput = String
@@ -67,14 +56,47 @@ instance Show FStackItem where
 
 -- DICTIONARY
 
+--interpret loop in haskell is different to forth
+--input is the input string from the repl
+--output is 'printable' as returned by functions
+--for now we just return the FStack and print the contents
+--later implement DOT and DOTESS to change the 'printable' state in FState
+
+--nb: this should take FState input for persistance across repl cycles
+--currently, each line operates in isolation
+--need the StateT monad
+
+fINTERPRET :: String -> FStack -> FStack
+fINTERPRET []  stk = stk -- base case, return stack state
+fINTERPRET str stk = fINTERPRET str' $ fIPTWO (FStr word):stk
+    where word = takeWhile (/= ' ') (str)
+          str' = drop (1 + length word) str
+
+-- interpret without any side-effects
+fIPTWO :: FStack -> FStack
+fIPTWO
+--Interpret loop in Forth
+--BL WORD FIND
+--IF EXECUTE
+--ELSE >TONUM
+--THEN
+
+
+--fWORD :: FStack
+
+--fWORD :: FStack -> FStack
+--fWORD (delim:inStr:st) = (word, shortstr)
+  --where word           = takeWhile (/= delim) (inStr)
+        --shortstr       = drop (1 + length word) inStr
+
+
+
 --fDOLITERAL :: FPC -> FStack -> FStack
 --fDOT
 --fBYE
 
 --fQUIT
 --fACCEPT
---fINTERPRET :: FState -> FStack
---fINTERPRET stk instr = (FStr "3") : stk
 
 --fWORD
 --fFIND
