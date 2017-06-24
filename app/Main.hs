@@ -145,16 +145,9 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --Console I/O: KEY EMIT
 
 --LITERALS / CONSTANTS
-fFIVE :: FState -> FState
-fFIVE s = s { datastack = dFive (datastack s) }
-    where dFive st = (FNum 5):st
-
 fBL :: FState -> FState
 fBL s = s { datastack = dBL (datastack s) }
     where dBL s = FStr " " : s
-
---dBL :: FDataStack -> FDataStack
---dBL s = FStr " " : s
 
 
 --MATH FUNCTIONS
