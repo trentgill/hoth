@@ -75,7 +75,7 @@ fEmptyRS st = st
 
 fINTER :: FState -> FState
 fINTER stay@(FState {input_string=[]}) = stay
-fINTER stay = fINTER . fFIND . fWORD . fBL $ stay
+fINTER stay = fINTER . fEXECUTE . fFIND . fWORD . fBL $ stay
 
 fINTERPRET :: String -> FDataStack -> FDataStack
 fINTERPRET []  stk = stk -- base case, return stack state
@@ -102,44 +102,20 @@ fFIND :: FState -> FState
 fFIND s = s { datastack = dFIND (datastack s) } where 
     dFIND []          = []
     dFIND (FStr s:ss)
-            | s == "FIVE"   = (FFn fFIVE):ss
             | s == "DUP"    = (FFn fDUP):ss
             | s == "*"      = (FFn fSTAR):ss
             | s == "SQUARED"= (FFn fSQUARED):ss
             | otherwise     = (FNum (toInteger (digitToInt $ head s))):ss
-                -- nb: ^error case
+    dFIND _ = []
+                -- nb: if toInteger fails
+                    -- 'otherwise' should catch that
+                    -- wildcard match if stack doesn't have str on top
+
 
 fEXECUTE :: FState -> FState
-fEXECUTE s = 
-
-
-
--- having trouble here:
--- how to destructively pop the stack for the delim
-    -- then pass the modified stack to 'word' to append?
-
---fWORD :: FState -> FState
---fWORD s = s { datastack = dWORD (datastack s, input_string s),
---              input_string = str' }
---    let dWORD = 
-
---intWord :: FDataStack -> FInput -> (FDataStack, FInput)
---intWord stack string = stack' string'
---    where stack' = (FStr word):stack
---    where string'= 
-
-
---fBL :: FState -> FState
---fBL s = s { datastack = dBL (datastack s) }
---    where dBL s = FStr " " : s
-
---fWORD :: FDataStack
-
---fWORD :: FDataStack -> FDataStack
---fWORD (delim:inStr:st) = (word, shortstr)
-  --where word           = takeWhile (/= delim) (inStr)
-        --shortstr       = drop (1 + length word) inStr
-
+fEXECUTE s@(FState {datastack=(FFn  xt:rest)}) = xt s
+fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
+-- need to pop the xt off the stack!
 
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
