@@ -174,14 +174,15 @@ fMIN (FNum s:FNum st:stk) = FNum(min s st) : stk
 
 
 --PRINTING
+--fDOT :: FState -> FState
+--fDOT s = s { datastack = dDot (datastack s) }
+    --dDot 
+    --where dDot []        = []
+          --dDot (s:stk) = stk, print(s)
+
 fDOT :: FDataStack -> FDataStack
 fDOT []      = []
 --fDOT (s:stk) = stk, print(s)
-
---fTONUM :: FDataStack -> FDataStack
---fTONUM ((FStr s):st) = (read s):st
--- protect against non-numerals..
-
 
 
 --STACK MODIFIERS
@@ -226,19 +227,3 @@ fTUCK (tos:nxt:stk) = tos:nxt:tos:stk
 fSQUARED :: FState -> FState
 fSQUARED = fDUP
        >>> fSTAR
-
-
-
---fINIT :: FDataStack -> FDataStack
---fINIT stk = fBYE
---          . fSQUARED
---          . 42
---          . DOLITERAL
---          $ stk
-
---fQDUP :: FDataStack -> FDataStack
---fQDUP ((FNum s):st)
---    | s /= 0 = s:s:st
---    | otherwise = s:st
-
-
