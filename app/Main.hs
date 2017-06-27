@@ -14,22 +14,13 @@ main = do
                     datastack = [],
                     input_string = interpret_this,
                     output_string = "" }
-    let endState = fQUIT initState
-    print( endState )
-    --print( output_string endState ) -- only the output str
-    --main
-    
-        --input_string = "7 FIVE SQUARED BYE",
-    --print(fINTERPRET interpret_this [])
-    --print (fSQUARED      -- 49
-    --     . fSEVEN        -- 7
-    --     $ [] :: FDataStack) -- empty stack
-    ----putStrLn (name)
+    let initState = fQUIT initState
+    print( initState )
+    main --how to maintain state?!
 
 -- TYPES
 -- Forth State
     -- Data Stack
-    -- Return Stack
     -- Program Counter
     -- Compile Flag
     -- Input string
