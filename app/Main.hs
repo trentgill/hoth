@@ -139,11 +139,17 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --Memory access: ! @ +! MOVE FILL
 --Console I/O: KEY EMIT
 
+--Stack transformer HOF
+--stack_op :: (FDataStack -> FDataStack) -> FState -> FState
+
+
 --LITERALS / CONSTANTS
 fBL :: FState -> FState
 fBL s = s { datastack = dBL (datastack s) }
-    where dBL s = FStr " " : s
+    where dBL = (FStr "x" :)
 
+ffBL :: FState -> FState
+ffBL s = s
 
 --MATH FUNCTIONS
 fSTAR :: FState -> FState
