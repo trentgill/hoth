@@ -6,6 +6,8 @@ import Control.Monad
 import Data.List
 import Control.Arrow
 import Data.Char
+import Dict
+import FTypes
 
 main :: IO ()
 main = repl FState {datastack = [],
@@ -20,36 +22,6 @@ repl state = do
     print (retState)
     repl retState 
 
-
--- TYPES
--- Forth State
-    -- Data Stack
-    -- Program Counter
-    -- Compile Flag
-    -- Input string
-    -- Print string
-    -- Dictionary(?)
-
-data FState = FState
-  { datastack :: FDataStack
-  , input_string :: FInput
-  , output_string :: FOutput }
-  deriving (Show)
-
--- Type aliases
-type FInput = String
-type FOutput = String
-type FDataStack = [FStackItem]
-
--- All potential stack contents (XT etc)
-data FStackItem = FNum Integer
-                | FStr String
-                | FFn  (FState -> FState)
-
-instance Show FStackItem where
-    show (FNum x) = show x
-    show (FStr x) = x
-    show (FFn  x) = "<function>"
 
 fINTER :: FState -> FState
 fINTER stay@(FState {input_string=[]}) = stay
@@ -122,7 +94,6 @@ fBL = stack_op(FStr " " :)
 fSTAR :: FState -> FState
 fSTAR s = s { datastack = dStar (datastack s) }
     where dStar (FNum s:FNum st:stk) = FNum(s * st) : stk
-
 
 fADD :: FDataStack -> FDataStack
 fADD (FNum s:FNum st:stk) = FNum(s + st) : stk
