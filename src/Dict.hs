@@ -12,11 +12,76 @@ stack_op f s = s { datastack = f (datastack s) }
 fBL :: FState -> FState
 fBL = stack_op(FStr " " :)
 
+
+
+-- arithmetic
+fSTAR :: FState -> FState
+fSTAR = stack_op(dStar)
+    where dStar (FNum s: FNum st:stk) = FNum(s * st) : stk
+
+fADD :: FState -> FState
+fADD = stack_op(dAdd)
+    where dAdd (FNum s: FNum st:stk) = FNum(s + st) : stk
+
+fSUB :: FState -> FState
+fSUB = stack_op(dSub)
+    where dSub (FNum s: FNum st:stk) = FNum(s - st) : stk
+
+fDIV :: FState -> FState
+fDIV = stack_op(dDiv)
+    where dDiv (FNum s: FNum st:stk) = FNum(div s st) : stk
+
+fMAX :: FState -> FState
+fMAX = stack_op(dMax)
+    where dMax (FNum s: FNum st:stk) = FNum(max s st) : stk
+
+fMIN :: FState -> FState
+fMIN = stack_op(dMin)
+    where dMin (FNum s: FNum st:stk) = FNum(min s st) : stk
+
+
+
 -- stack ops
 fDUP :: FState -> FState
 fDUP = stack_op(dDup)
     where dDup []        = []
           dDup (tos:stk) = tos:tos:stk
 
---fDROP :: FState -> FState
---fDROP
+fDROP :: FState -> FState
+fDROP = stack_op(dDrop)
+    where dDrop []      = []
+          dDrop (_:stk) = stk
+
+
+fSWAP :: FState -> FState
+fSWAP = stack_op(dSwap)
+    where dSwap []            = []
+          dSwap (tos:[])      = tos:[]
+          dSwap (tos:nxt:stk) = nxt:tos:stk
+
+fOVER :: FState -> FState
+fOVER = stack_op(dOver)
+    where dOver []            = []
+          dOver (tos:[])      = tos:[]
+          dOver (tos:nxt:stk) = nxt:tos:nxt:stk
+
+fROT :: FState -> FState
+fROT = stack_op(dRot)
+    where dRot []                = []
+          dRot (tos:[])          = tos:[]
+          dRot (tos:nxt:[])      = tos:nxt:[]
+          dRot (tos:nxt:thd:stk) = thd:tos:nxt:stk
+
+fNIP :: FState -> FState
+fNIP = stack_op(dNip)
+    where dNip []          = []
+          dNip (tos:[])    = tos: []
+          dNip (tos:_:stk) = tos:stk
+
+fTUCK :: FState -> FState
+fTUCK = stack_op(dTuck)
+    where dTuck []            = []
+          dTuck (tos:[])      = tos:tos:[]
+          dTuck (tos:nxt:stk) = tos:nxt:tos:stk
+
+
