@@ -28,6 +28,8 @@ fDOT s = s { datastack = stack_pop( datastack s  )
            }
          where getPancake (cake:cakes) = show(cake) ++ " pancake!"
 
+
+
 -- constants
 fBL :: FState -> FState
 fBL = stack_op(FStr " " :)
