@@ -71,12 +71,6 @@ fINTER :: FState -> FState
 fINTER stay@(FState {input_string=[]}) = stay
 fINTER stay = fINTER . fEXECUTE . fFIND . fWORD . fBL $ stay
 
-fINTERPRET :: String -> FDataStack -> FDataStack
-fINTERPRET []  stk = stk -- base case, return stack state
-fINTERPRET str stk = fINTERPRET str' $ stk
-    where word = takeWhile (/= ' ') (str)
-          str' = drop (1 + length word) str
-
 --Interpret loop in Forth
 --BL WORD FIND
 --IF EXECUTE
