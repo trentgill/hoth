@@ -120,11 +120,6 @@ fDOT []      = []
 
 
 --STACK MODIFIERS
-fDUP :: FState -> FState
-fDUP s = s { datastack = dDup (datastack s) }
-    where dDup []        = []
-          dDup (tos:stk) = tos:tos:stk
-
 fDROP :: FDataStack -> FDataStack
 fDROP []      = []
 fDROP (_:stk) = stk
