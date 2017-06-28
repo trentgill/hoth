@@ -6,6 +6,9 @@ import FTypes
 stack_op :: (FDataStack -> FDataStack) -> FState -> FState
 stack_op f s = s { datastack = f (datastack s) }
 
+stack_pop :: FDataStack -> FDataStack
+stack_pop = drop 1
+
 -- DICTIONARY
 
 -- printing

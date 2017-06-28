@@ -33,11 +33,8 @@ fINTER :: FState -> FState
 fINTER stay@(FState {input_string=[]}) = stay
 fINTER stay = fINTER . fEXECUTE . fFIND . fWORD . fBL $ stay
 
-stk_pop :: FDataStack -> FDataStack
-stk_pop = drop 1
-
 fWORD :: FState -> FState
-fWORD s = s { datastack = (FStr word):(stk_pop $ datastack s)
+fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
             , input_string = str' }
     where word  = takeWhile (/= delim) (input_string s)
           str'  = drop (1 + length word) (input_string s)
@@ -62,7 +59,7 @@ fFIND s = s { datastack = dFIND (datastack s) } where
 
 fEXECUTE :: FState -> FState
 fEXECUTE s@(FState {datastack=(FFn  xt:rest)}) = xt s {
-    datastack = stk_pop $ datastack s}
+    datastack = stack_pop $ datastack s}
 fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
