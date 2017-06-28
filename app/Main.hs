@@ -64,17 +64,9 @@ fEXECUTE s@(FState {datastack=(FFn  xt:rest)}) = xt s {
 fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
---fDOT
---fBYE
 
---fQUIT
---fACCEPT
-
---fWORD
---fFIND
 --fIF, fELSE, fTHEN
 --fQBRANCH, fBRANCH
---fEXECUTE
 --fABORT
 
 --fCOLON
@@ -86,17 +78,6 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --Comparators: = < <= > >= <>
 --Memory access: ! @ +! MOVE FILL
 --Console I/O: KEY EMIT
-
-
---LITERALS / CONSTANTS
-
-
---PRINTING
---fDOT :: FState -> FState
---fDOT s = s { datastack = dDot (datastack s) }
-    --dDot 
-    --where dDot []        = []
-          --dDot (s:stk) = stk, print(s)
 
 
 --COMPOSITE WORDS (hand compiled)
