@@ -17,14 +17,17 @@ data FState = FState
 type FInput = String
 type FOutput = String
 type FDataStack = [FStackItem]
+type FCFn = [FStackItem]
 
 -- Stack content options
 data FStackItem = FNum Integer
                 | FStr String
                 | FFn  (FState -> FState)
+                | FCFn [(FState -> FState)]
 
 instance Show FStackItem where
     show (FNum x) = show x
     show (FStr x) = x
     show (FFn  x) = "<function>"
+    show (FCFn x) = "[composite fn]"
 
