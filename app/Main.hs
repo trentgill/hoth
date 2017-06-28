@@ -85,8 +85,8 @@ fWORD s = s { datastack = (FStr word):(stk_pop $ datastack s)
             , input_string = str' }
     where word  = takeWhile (/= delim) (input_string s)
           str'  = drop (1 + length word) (input_string s)
-          delim = ' '
-          --delim = head(head(datastack s)) :: Char
+          delim = getChar (datastack s)
+          getChar (FStr c:stk) = head c
 
 -- pattern match into the dictionary here!
 fFIND :: FState -> FState
