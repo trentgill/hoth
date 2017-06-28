@@ -100,10 +100,6 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
     --where dDot []        = []
           --dDot (s:stk) = stk, print(s)
 
-fDOT :: FDataStack -> FDataStack
-fDOT []      = []
---fDOT (s:stk) = stk, print(s)
-
 
 --COMPOSITE WORDS (hand compiled)
 fSQUARED :: FState -> FState
