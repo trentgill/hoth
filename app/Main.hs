@@ -50,6 +50,7 @@ fFIND s = s { datastack = dFIND (datastack s) } where
             | s == "*"      = (FFn fSTAR):ss
             | s == "SQUARED"= (FFn fSQUARED):ss
             | s == ".S"     = (FFn fDOTESS):ss
+            | s == "."      = (FFn fDOT):ss
             | otherwise     = (FNum (toInteger (digitToInt $ head s))):ss
     dFIND _ = []
                 -- nb: if toInteger fails

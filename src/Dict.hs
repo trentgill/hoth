@@ -18,9 +18,15 @@ fDOTESS s = s { output_string =
                  ++ (show $ length (datastack s))
                  ++ "> "
                  ++ (show (datastack s))
-                 ++ " " }
+                 ++ " nice stack =]" }
 
-
+fDOT :: FState -> FState
+fDOT s@(FState {datastack=[]}) =
+        s { output_string = "stack's empty mate" }
+fDOT s = s { datastack = stack_pop( datastack s  )
+           , output_string = getPancake( datastack s )
+           }
+         where getPancake (cake:cakes) = show(cake) ++ " pancake!"
 
 -- constants
 fBL :: FState -> FState
