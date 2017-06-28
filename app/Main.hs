@@ -16,7 +16,7 @@ repl :: FState -> IO ()
 repl state = do
     interpret_this <- getLine
     let inputState = state { input_string = interpret_this }
-    let retState = fQUIT inputState
+    let retState = fINTER inputState
     print (retState)
     repl retState 
 
@@ -51,31 +51,9 @@ instance Show FStackItem where
     show (FStr x) = x
     show (FFn  x) = "<function>"
 
--- DICTIONARY
-
-
--- empty return stack
--- accept a line of input from terminal
--- interpret input buffer til empty
--- repeta from 'accept'
-fQUIT :: FState -> FState
-fQUIT = fEmptyRS
-    >>> fINTER
--- should throw loop back through main now
-
-fEmptyRS :: FState -> FState
-fEmptyRS st = st
--- eventually need to clear the return stack after it's implemented
-
 fINTER :: FState -> FState
 fINTER stay@(FState {input_string=[]}) = stay
 fINTER stay = fINTER . fEXECUTE . fFIND . fWORD . fBL $ stay
-
---Interpret loop in Forth
---BL WORD FIND
---IF EXECUTE
---ELSE >TONUM
---THEN
 
 stk_pop :: FDataStack -> FDataStack
 stk_pop = drop 1
