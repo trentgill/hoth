@@ -10,18 +10,24 @@ import Dict
 import FTypes
 
 main :: IO ()
-main = repl FState {datastack = [],
-                    input_string = "",
-                    output_string = "" } 
+main = repl FState { datastack = []
+                   , input_string = ""
+                   , output_string = ""
+                   }
 
 repl :: FState -> IO ()
 repl state = do
     interpret_this <- getLine
-    let inputState = state { input_string = interpret_this }
+    let inputState = state { input_string = interpret_this
+                           , output_string = ""
+                           }
     let retState = fINTER inputState
-    print (retState)
+    putStrLn (get_outstr retState)
     repl retState 
 
+get_outstr :: FState -> String
+get_outstr s@(FState {output_string=[]}) = "ok."
+get_outstr s = (output_string s)
 
 fINTER :: FState -> FState
 fINTER stay@(FState {input_string=[]}) = stay
@@ -46,6 +52,7 @@ fFIND s = s { datastack = dFIND (datastack s) } where
             | s == "DUP"    = (FFn fDUP):ss
             | s == "*"      = (FFn fSTAR):ss
             | s == "SQUARED"= (FFn fSQUARED):ss
+            | s == ".S"     = (FFn fDOTESS):ss
             | otherwise     = (FNum (toInteger (digitToInt $ head s))):ss
     dFIND _ = []
                 -- nb: if toInteger fails
