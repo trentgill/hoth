@@ -137,16 +137,17 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --Console I/O: KEY EMIT
 
 --Stack transformer HOF
---stack_op :: (FDataStack -> FDataStack) -> FState -> FState
-
+stack_op :: (FDataStack -> FDataStack) -> FState -> FState
+stack_op f s = s { datastack = f (datastack s) }
 
 --LITERALS / CONSTANTS
-fBL :: FState -> FState
-fBL s = s { datastack = dBL (datastack s) }
+--ffBL is old version before using transformer!
+--ffBL :: FState -> FState
+--ffBL s = s { datastack = dBL (datastack s) }
     where dBL = (FStr "x" :)
 
-ffBL :: FState -> FState
-ffBL s = s
+fBL :: FState -> FState
+fBL = stack_op(FStr "x" :)
 
 --MATH FUNCTIONS
 fSTAR :: FState -> FState
