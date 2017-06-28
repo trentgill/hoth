@@ -85,27 +85,6 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 
 --LITERALS / CONSTANTS
 
---MATH FUNCTIONS
-fSTAR :: FState -> FState
-fSTAR s = s { datastack = dStar (datastack s) }
-    where dStar (FNum s:FNum st:stk) = FNum(s * st) : stk
-
-fADD :: FDataStack -> FDataStack
-fADD (FNum s:FNum st:stk) = FNum(s + st) : stk
-
-fSUB :: FDataStack -> FDataStack
-fSUB (FNum s:FNum st:stk) = FNum(s - st) : stk
-
-fDIV :: FDataStack -> FDataStack
-fDIV (FNum s:FNum st:stk) = FNum(div s st) : stk
-
-fMAX :: FDataStack -> FDataStack
-fMAX (FNum s:FNum st:stk) = FNum(max s st) : stk
-
-fMIN :: FDataStack -> FDataStack
-fMIN (FNum s:FNum st:stk) = FNum(min s st) : stk
-
-
 
 --PRINTING
 --fDOT :: FState -> FState
@@ -117,39 +96,6 @@ fMIN (FNum s:FNum st:stk) = FNum(min s st) : stk
 fDOT :: FDataStack -> FDataStack
 fDOT []      = []
 --fDOT (s:stk) = stk, print(s)
-
-
---STACK MODIFIERS
-fDROP :: FDataStack -> FDataStack
-fDROP []      = []
-fDROP (_:stk) = stk
-
-fSWAP :: FDataStack -> FDataStack
-fSWAP []            = []
-fSWAP (tos:[])      = tos:[]
-fSWAP (tos:nxt:stk) = nxt:tos:stk
-
-fOVER :: FDataStack -> FDataStack
-fOVER []            = []
-fOVER (tos:[])      = tos:[]
-fOVER (tos:nxt:stk) = nxt:tos:nxt:stk
-
-fROT :: FDataStack -> FDataStack
-fROT []                = []
-fROT (tos:[])          = tos:[]
-fROT (tos:nxt:[])      = tos:nxt:[]
-fROT (tos:nxt:thd:stk) = thd:tos:nxt:stk
-
-fNIP :: FDataStack -> FDataStack
-fNIP []          = []
-fNIP (tos:[])    = tos:[]
-fNIP (tos:_:stk) = tos:stk
-
-fTUCK :: FDataStack -> FDataStack
-fTUCK []            = []
-fTUCK (tos:[])      = tos:tos:[]
-fTUCK (tos:nxt:stk) = tos:nxt:tos:stk
-
 
 
 --COMPOSITE WORDS (hand compiled)
