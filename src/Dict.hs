@@ -8,6 +8,17 @@ stack_op f s = s { datastack = f (datastack s) }
 
 -- DICTIONARY
 
+-- printing
+fDOTESS :: FState -> FState
+fDOTESS s = s { output_string =
+                    "<len: "
+                 ++ (show $ length (datastack s))
+                 ++ "> "
+                 ++ (show (datastack s))
+                 ++ " " }
+
+
+
 -- constants
 fBL :: FState -> FState
 fBL = stack_op(FStr " " :)
