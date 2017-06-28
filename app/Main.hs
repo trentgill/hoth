@@ -82,13 +82,8 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --Memory access: ! @ +! MOVE FILL
 --Console I/O: KEY EMIT
 
---pack/unpack datastack affecting words
-stack_op :: (FDataStack -> FDataStack) -> FState -> FState
-stack_op f s = s { datastack = f (datastack s) }
 
 --LITERALS / CONSTANTS
-fBL :: FState -> FState
-fBL = stack_op(FStr " " :)
 
 --MATH FUNCTIONS
 fSTAR :: FState -> FState
