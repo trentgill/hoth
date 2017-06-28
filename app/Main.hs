@@ -8,15 +8,18 @@ import Control.Arrow
 import Data.Char
 
 main :: IO ()
-main = do
+main = repl FState {datastack = [],
+                    input_string = "",
+                    output_string = "" } 
+
+repl :: FState -> IO ()
+repl state = do
     interpret_this <- getLine
-    let initState = FState {
-                    datastack = [],
-                    input_string = interpret_this,
-                    output_string = "" }
-    let initState = fQUIT initState
-    print( initState )
-    main --how to maintain state?!
+    let inputState = state { input_string = interpret_this }
+    let retState = fQUIT inputState
+    print (retState)
+    repl retState 
+
 
 -- TYPES
 -- Forth State
