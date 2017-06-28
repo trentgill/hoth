@@ -11,12 +11,15 @@ data FState = FState
             { datastack :: FDataStack
             , input_string :: FInput
             , output_string :: FOutput
+            , dictionary :: FDict
             } deriving (Show)
 
 -- Type aliases
 type FInput = String
 type FOutput = String
 type FDataStack = [FStackItem]
+type FDictEntry = (String, FStackItem) --FStackItem is of type FCFn
+type FDict = [FDictEntry]
 type FCFn = [FStackItem]
 
 -- Stack content options

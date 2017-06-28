@@ -9,10 +9,17 @@ import Data.Char
 import Dict
 import FTypes
 
+native_dict = [ ("DUP"  ,FFn fDUP      )
+              , ("*"    ,FFn fSTAR     )
+              , (".S"   ,FFn fDOTESS   )
+              , ("."    ,FFn fDOT      )
+              ]
+
 main :: IO ()
 main = repl FState { datastack = []
                    , input_string = ""
                    , output_string = ""
+                   , dictionary = native_dict
                    }
 
 repl :: FState -> IO ()
@@ -24,6 +31,7 @@ repl state = do
     let retState = fINTER inputState
     putStrLn (get_outstr retState)
     repl retState 
+
 
 get_outstr :: FState -> String
 get_outstr s@(FState {output_string=[]}) = "ok."
@@ -43,20 +51,32 @@ fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
 
 -- pattern match into the dictionary here!
 fFIND :: FState -> FState
-fFIND s = s { datastack = dFIND (datastack s) } where 
-    dFIND []          = []
-    dFIND (FStr s:ss)
-            | s == "DUP"    = (FFn fDUP):ss
-            | s == "*"      = (FFn fSTAR):ss
-            | s == "SQUARED"= (FFn fSQUARED):ss
-            | s == ".S"     = (FFn fDOTESS):ss
-            | s == "."      = (FFn fDOT):ss
-            | otherwise     = (FNum (toInteger (digitToInt $ head s))):ss
-    dFIND _ = []
+fFIND s = s { datastack = dFIND (datastack s)(dictionary s) } where
+    dFIND [] _              = []
+    dFIND (FStr x:xs) d = (matchDict):xs
+        where matchIt :: [FStackItem]
+              matchIt = [ fn | (name, fn) <- d
+                             , name == x ]
+              matchDict = case matchIt of
+                        []  -> FNum (read x)
+                        fun -> head fun
+-- (FNum (toInteger (digitToInt $ head x))):xs
+--    dFIND (FStr x:xs) d
+--            | x == "DUP"    = (FFn fDUP):xs
+--            | x == "*"      = (FFn fSTAR):xs
+--            | x == "SQUARED"= (FFn fSQUARED):xs
+--            | x == ".S"     = (FFn fDOTESS):xs
+--            | x == "."      = (FFn fDOT):xs
+--            | otherwise     = (FNum (toInteger (digitToInt $ head x))):xs
+--    dFIND _ _ = []
                 -- nb: if toInteger fails
                     -- 'otherwise' should catch that
                     -- wildcard match if stack doesn't have str on top
-
+-- `d` above is a dictionary
+-- this is a list of tuples, with name & list of stack items (usually
+-- functions)
+--
+--
 
 fEXECUTE :: FState -> FState
 fEXECUTE s@(FState {datastack=(FFn  xt:rest)}) = xt s {
