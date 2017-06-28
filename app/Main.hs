@@ -144,10 +144,10 @@ stack_op f s = s { datastack = f (datastack s) }
 --ffBL is old version before using transformer!
 --ffBL :: FState -> FState
 --ffBL s = s { datastack = dBL (datastack s) }
-    where dBL = (FStr "x" :)
+--    where dBL = (FStr "x" :)
 
 fBL :: FState -> FState
-fBL = stack_op(FStr "x" :)
+fBL = stack_op(FStr " " :)
 
 --MATH FUNCTIONS
 fSTAR :: FState -> FState
