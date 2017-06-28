@@ -85,8 +85,6 @@ fEXECUTE :: FState -> FState
 fEXECUTE s@(FState {datastack=(FFn  xt:rest)}) = xt s {
     datastack = stk_pop $ datastack s}
 fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
--- need to pop the xt off the stack!
-
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
 --fDOT
@@ -105,8 +103,6 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --fCOLON
 --fSEMICOLON
 
-
---exercise: implement these
 --Return stack operations: R> >R R@
 --Arithmetic/bitwise operations: MOD NEGATE OR AND INVERT XOR LSHIFT RSHIFT
 --Simple math: ABS
@@ -114,16 +110,11 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --Memory access: ! @ +! MOVE FILL
 --Console I/O: KEY EMIT
 
---Stack transformer HOF
+--pack/unpack datastack affecting words
 stack_op :: (FDataStack -> FDataStack) -> FState -> FState
 stack_op f s = s { datastack = f (datastack s) }
 
 --LITERALS / CONSTANTS
---ffBL is old version before using transformer!
---ffBL :: FState -> FState
---ffBL s = s { datastack = dBL (datastack s) }
---    where dBL = (FStr "x" :)
-
 fBL :: FState -> FState
 fBL = stack_op(FStr " " :)
 
