@@ -11,6 +11,29 @@ stack_pop = drop 1
 
 -- DICTIONARY
 
+-- map of native functions
+-- must manually add new native words here :/
+
+native_dict = [ (".S"   ,FFn fDOTESS   )
+              , ("."    ,FFn fDOT      )
+              , ("BL"   ,FFn fBL       )
+              , ("*"    ,FFn fSTAR     )
+              , ("+"    ,FFn fADD      )
+              , ("-"    ,FFn fSUB      )
+              , ("/"    ,FFn fDIV      )
+              , ("MAX"  ,FFn fMAX      )
+              , ("MIN"  ,FFn fMIN      )
+              , ("DUP"  ,FFn fDUP      )
+              , ("DROP" ,FFn fDROP     )
+              , ("SWAP" ,FFn fSWAP     )
+              , ("OVER" ,FFn fOVER     )
+              , ("ROT"  ,FFn fROT      )
+              , ("NIP"  ,FFn fNIP      )
+              , ("TUCK" ,FFn fTUCK     )
+              , ("SQUARED",FFn fSQUARED)
+              ]
+
+
 -- printing
 fDOTESS :: FState -> FState
 fDOTESS s = s { output_string =
@@ -106,4 +129,8 @@ fTUCK = stack_op(dTuck)
           dTuck (tos:[])      = tos:tos:[]
           dTuck (tos:nxt:stk) = tos:nxt:tos:stk
 
+--COMPOSITE WORDS
+--hand compiled
 
+fSQUARED :: FState -> FState
+fSQUARED = fSTAR . fDUP

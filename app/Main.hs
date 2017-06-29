@@ -9,12 +9,6 @@ import Data.Char
 import Dict
 import FTypes
 
-native_dict = [ ("DUP"  ,FFn fDUP      )
-              , ("*"    ,FFn fSTAR     )
-              , (".S"   ,FFn fDOTESS   )
-              , ("."    ,FFn fDOT      )
-              ]
-
 main :: IO ()
 main = repl FState { datastack = []
                    , input_string = ""
@@ -101,6 +95,6 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 
 
 --COMPOSITE WORDS (hand compiled)
-fSQUARED :: FState -> FState
-fSQUARED = fDUP
-       >>> fSTAR
+--fSQUARED :: FState -> FState
+--fSQUARED = fDUP
+--       >>> fSTAR
