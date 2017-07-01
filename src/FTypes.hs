@@ -26,7 +26,7 @@ type FCFn = [FStackItem]
 data FStackItem = FNum Integer
                 | FStr String
                 | FFn  (FState -> FState)
-                | FCFn [(FState -> FState)]
+                | FCFn [FStackItem]
 
 instance Show FStackItem where
     show (FNum x) = show x

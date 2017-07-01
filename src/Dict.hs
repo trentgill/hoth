@@ -30,9 +30,8 @@ native_dict = [ (".S"   ,FFn fDOTESS   )
               , ("ROT"  ,FFn fROT      )
               , ("NIP"  ,FFn fNIP      )
               , ("TUCK" ,FFn fTUCK     )
-              , ("SQUARED",FFn fSQUARED)
+              , ("SQUARED",FCFn fSQUARED)
               ]
-
 
 -- printing
 fDOTESS :: FState -> FState
@@ -132,5 +131,5 @@ fTUCK = stack_op(dTuck)
 --COMPOSITE WORDS
 --hand compiled
 
-fSQUARED :: FState -> FState
-fSQUARED = fSTAR . fDUP
+fSQUARED :: [FStackItem]
+fSQUARED = [FFn fDUP, FFn fSTAR]

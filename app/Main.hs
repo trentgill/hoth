@@ -54,28 +54,19 @@ fFIND s = s { datastack = dFIND (datastack s)(dictionary s) } where
               matchDict = case matchIt of
                         []  -> FNum (read x)
                         fun -> head fun
--- (FNum (toInteger (digitToInt $ head x))):xs
---    dFIND (FStr x:xs) d
---            | x == "DUP"    = (FFn fDUP):xs
---            | x == "*"      = (FFn fSTAR):xs
---            | x == "SQUARED"= (FFn fSQUARED):xs
---            | x == ".S"     = (FFn fDOTESS):xs
---            | x == "."      = (FFn fDOT):xs
---            | otherwise     = (FNum (toInteger (digitToInt $ head x))):xs
---    dFIND _ _ = []
-                -- nb: if toInteger fails
-                    -- 'otherwise' should catch that
-                    -- wildcard match if stack doesn't have str on top
--- `d` above is a dictionary
--- this is a list of tuples, with name & list of stack items (usually
--- functions)
---
---
 
 fEXECUTE :: FState -> FState
+fEXECUTE s@(FState {datastack=(FNum nx:rest)}) = s
 fEXECUTE s@(FState {datastack=(FFn  xt:rest)}) = xt s {
     datastack = stack_pop $ datastack s}
-fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
+fEXECUTE s@(FState {datastack=(FCFn lx:rest)}) =
+    comp_proc lx s {datastack = stack_pop $ datastack s}
+
+comp_proc :: [FStackItem] -> FState -> FState
+comp_proc ([])     st = st
+comp_proc (fn:fns) st = comp_proc fns $ fEXECUTE st {
+    datastack = fn : datastack st}
+
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
 
@@ -93,8 +84,3 @@ fEXECUTE s@(FState {datastack=(FNum xt:rest)}) = s
 --Memory access: ! @ +! MOVE FILL
 --Console I/O: KEY EMIT
 
-
---COMPOSITE WORDS (hand compiled)
---fSQUARED :: FState -> FState
---fSQUARED = fDUP
---       >>> fSTAR
