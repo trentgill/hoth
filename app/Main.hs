@@ -56,16 +56,15 @@ fFIND s = s { datastack = dFIND (datastack s)(dictionary s) } where
                         fun -> head fun
 
 fEXECUTE :: FState -> FState
-fEXECUTE s@(FState {datastack=(FNum nx:rest)}) = s
-fEXECUTE s@(FState {datastack=(FFn  xt:rest)}) = xt s {
+fEXECUTE s@(FState {datastack=(FNum x:xs)}) = s
+fEXECUTE s@(FState {datastack=(FFn  x:xs)}) = x s {
     datastack = stack_pop $ datastack s}
-fEXECUTE s@(FState {datastack=(FCFn lx:rest)}) =
-    comp_proc lx s {datastack = stack_pop $ datastack s}
-
-comp_proc :: [FStackItem] -> FState -> FState
-comp_proc ([])     st = st
-comp_proc (fn:fns) st = comp_proc fns $ fEXECUTE st {
-    datastack = fn : datastack st}
+fEXECUTE s@(FState {datastack=(FCFn x:rest)}) =
+    comp_proc x s {datastack = stack_pop $ datastack s}
+    where comp_proc :: [FStackItem] -> FState -> FState
+          comp_proc ([])   st = st
+          comp_proc (f:fs) st = comp_proc fs $ fEXECUTE st {
+            datastack = f : datastack st}
 
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
