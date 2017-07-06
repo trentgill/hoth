@@ -83,3 +83,10 @@ fEXECUTE s@(FState {datastack=(FCFn x:rest)}) =
 --Memory access: ! @ +! MOVE FILL
 --Console I/O: KEY EMIT
 
+--example of colon word
+-- : DIAGONAL?
+--   @ DUP
+--   2 11 23 WIN?
+--   SWAP
+--   5 11 17 WIN?
+--   OR ;
