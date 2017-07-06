@@ -35,18 +35,23 @@ native_dict = [ (".S"   ,FFn fDOTESS   )
 
 -- printing
 fDOTESS :: FState -> FState
-fDOTESS s = s { output_string =
-                    "<len: "
+fDOTESS s@(FState {datastack=[]}) =
+        s { output_string = output_string s
+          ++ "stack's empty mate"
+          ++ "\n" }
+fDOTESS s = s { output_string = output_string s
+                 ++ "<len: "
                  ++ (show $ length (datastack s))
                  ++ "> "
                  ++ (show (datastack s))
-                 ++ " nice stack =]" }
+                 ++ " nice stack =]"
+                 ++ "\n" }
 
 fDOT :: FState -> FState
 fDOT s@(FState {datastack=[]}) =
         s { output_string = "stack's empty mate" }
 fDOT s = s { datastack = stack_pop( datastack s  )
-           , output_string = getPancake( datastack s )
+           , output_string = output_string s ++ getPancake( datastack s ) ++ "\n"
            }
          where getPancake (cake:cakes) = show(cake) ++ " pancake!"
 
