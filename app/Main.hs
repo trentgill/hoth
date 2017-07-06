@@ -46,7 +46,7 @@ fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
 -- pattern match into the dictionary here!
 fFIND :: FState -> FState
 fFIND s = s { datastack = dFIND (datastack s)(dictionary s) } where
-    dFIND [] _              = []
+    dFIND [] _          = []
     dFIND (FStr x:xs) d = (matchDict):xs
         where matchIt :: [FStackItem]
               matchIt = [ fn | (name, fn) <- d
