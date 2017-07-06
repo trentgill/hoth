@@ -133,3 +133,10 @@ fTUCK = stack_op(dTuck)
 
 fSQUARED :: [FStackItem]
 fSQUARED = [FFn fDUP, FFn fSTAR]
+
+--runtime compilation
+addCubed :: FState -> FState
+addCubed s = s { dictionary = cubWord : dictionary s }
+    where cubWord :: FDictEntry
+          cubWord = ("CUBED", FCFn [FFn fDUP, FFn fDUP, FFn fSTAR, FFn fSTAR])
+

@@ -22,7 +22,7 @@ repl state = do
     let inputState = state { input_string = interpret_this
                            , output_string = ""
                            }
-    let retState = fINTER inputState
+    let retState = fINTER . addCubed $ inputState
     putStrLn (get_outstr retState)
     repl retState 
 
