@@ -14,29 +14,29 @@ stack_pop = drop 1
 -- map of native functions
 -- must manually add new native words here :/
 
-native_dict = [ (".S"   ,FFn fDOTESS   )
-              , ("."    ,FFn fDOT      )
-              , ("BL"   ,FFn fBL       )
-              , ("*"    ,FFn fSTAR     )
-              , ("+"    ,FFn fADD      )
-              , ("-"    ,FFn fSUB      )
-              , ("/"    ,FFn fDIV      )
-              , ("MAX"  ,FFn fMAX      )
-              , ("MIN"  ,FFn fMIN      )
-              , ("DUP"  ,FFn fDUP      )
-              , ("DROP" ,FFn fDROP     )
-              , ("SWAP" ,FFn fSWAP     )
-              , ("OVER" ,FFn fOVER     )
-              , ("ROT"  ,FFn fROT      )
-              , ("NIP"  ,FFn fNIP      )
-              , ("TUCK" ,FFn fTUCK     )
-              , ("WORD" ,FFn fWORD     )
-              , ("FIND" ,FFn fFIND     )
-              , ("["    ,FFn fLEFTBRAK )
-              , ("]"    ,FFn fRITEBRAK )
-              , (":"    ,FCFn fCOLON   )
-              , ("SQUARED",FCFn fSQUARED)
-              , ("DBL"  ,FCFn [FFn fDUP, FFn fADD])
+native_dict = [ (".S"   ,False, FFn fDOTESS   )
+              , ("."    ,False, FFn fDOT      )
+              , ("BL"   ,False, FFn fBL       )
+              , ("*"    ,False, FFn fSTAR     )
+              , ("+"    ,False, FFn fADD      )
+              , ("-"    ,False, FFn fSUB      )
+              , ("/"    ,False, FFn fDIV      )
+              , ("MAX"  ,False, FFn fMAX      )
+              , ("MIN"  ,False, FFn fMIN      )
+              , ("DUP"  ,False, FFn fDUP      )
+              , ("DROP" ,False, FFn fDROP     )
+              , ("SWAP" ,False, FFn fSWAP     )
+              , ("OVER" ,False, FFn fOVER     )
+              , ("ROT"  ,False, FFn fROT      )
+              , ("NIP"  ,False, FFn fNIP      )
+              , ("TUCK" ,False, FFn fTUCK     )
+              , ("WORD" ,False, FFn fWORD     )
+              , ("FIND" ,False, FFn fFIND     )
+              , ("["    ,False, FFn fLEFTBRAK )
+              , ("]"    ,True,  FFn fRITEBRAK )
+              , (":"    ,False, FCFn fCOLON   )
+              , ("SQUARED",False, FCFn fSQUARED)
+              , ("DBL"  ,False, FCFn [FFn fDUP, FFn fADD])
               ]
 
 -- printing
@@ -175,7 +175,7 @@ fFIND s = s { datastack = dFIND (datastack s)(dictionary s)  }
     where dFIND [] _          = []
           dFIND (FStr x:xs) d = (matchDict):xs
             where matchIt :: [FStackItem]
-                  matchIt = [ fn | (name, fn) <- d
+                  matchIt = [ fn | (name, flag, fn) <- d
                                  , name == x ]
                   matchDict = case matchIt of
                             []  -> FNum (read x)
@@ -197,6 +197,7 @@ fCREATE s@(FState {datastack = (FStr name:xs)}) =
       , datastack  = stack_pop $ datastack s }
     where coWord :: FDictEntry
           coWord = ( name
+                   , False
                    , FCFn [] )
 
 -- IMMEDIATE
@@ -232,6 +233,7 @@ addCubed :: FState -> FState
 addCubed s = s { dictionary = cubWord : dictionary s }
     where cubWord :: FDictEntry
           cubWord = ( "CUBED"
+                    , False
                     , FCFn [ FFn fDUP
                            , FFn fDUP
                            , FFn fSTAR
