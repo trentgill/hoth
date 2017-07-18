@@ -30,7 +30,13 @@ native_dict = [ (".S"   ,FFn fDOTESS   )
               , ("ROT"  ,FFn fROT      )
               , ("NIP"  ,FFn fNIP      )
               , ("TUCK" ,FFn fTUCK     )
+              , ("WORD" ,FFn fWORD     )
+              , ("FIND" ,FFn fFIND     )
+              , ("["    ,FFn fLEFTBRAK )
+              , ("]"    ,FFn fRITEBRAK )
+              , (":"    ,FCFn fCOLON   )
               , ("SQUARED",FCFn fSQUARED)
+              , ("DBL"  ,FCFn [FFn fDUP, FFn fADD])
               ]
 
 -- printing
@@ -133,15 +139,64 @@ fTUCK = stack_op(dTuck)
           dTuck (tos:[])      = tos:tos:[]
           dTuck (tos:nxt:stk) = tos:nxt:tos:stk
 
+
+--interpret and parse
+fWORD :: FState -> FState
+fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
+            , input_string = str' }
+    where word  = takeWhile (/= delim) (input_string s)
+          str'  = drop (1 + length word) (input_string s)
+          delim = getChar (datastack s)
+          getChar (FStr c:stk) = head c
+
+fFIND :: FState -> FState
+fFIND s = s { datastack = dFIND (datastack s)(dictionary s)  }
+    where dFIND [] _          = []
+          dFIND (FStr x:xs) d = (matchDict):xs
+            where matchIt :: [FStackItem]
+                  matchIt = [ fn | (name, fn) <- d
+                                 , name == x ]
+                  matchDict = case matchIt of
+                            []  -> FNum (read x)
+                            fun -> head fun
+
+--compile settings
+fLEFTBRAK :: FState -> FState
+fLEFTBRAK s = s { compile_flag = False }
+
+fRITEBRAK :: FState -> FState
+fRITEBRAK s = s { compile_flag = True }
+
+
+
 --COMPOSITE WORDS
 --hand compiled
+--
+--note the runtime compilation example of CUBED
+--after compilation works, should create a transformer
+--that does the cubWord elements to avoid repetition
+--
+--after that works, can refactor to allow words to be
+--entered as text strings that use the compilation step
+--to add them to dictionary at haskell-compile time
+
+fCOLON :: [FStackItem]
+fCOLON = [ FFn fBL
+         , FFn fWORD
+         , FFn fRITEBRAK
+         ]
 
 fSQUARED :: [FStackItem]
-fSQUARED = [FFn fDUP, FFn fSTAR]
+fSQUARED = [ FFn fDUP
+           , FFn fSTAR ]
 
 --runtime compilation
 addCubed :: FState -> FState
 addCubed s = s { dictionary = cubWord : dictionary s }
     where cubWord :: FDictEntry
-          cubWord = ("CUBED", FCFn [FFn fDUP, FFn fDUP, FFn fSTAR, FFn fSTAR])
+          cubWord = ( "CUBED"
+                    , FCFn [ FFn fDUP
+                           , FFn fDUP
+                           , FFn fSTAR
+                           , FFn fSTAR])
 

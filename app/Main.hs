@@ -36,26 +36,6 @@ fINTER :: FState -> FState
 fINTER stay@(FState {input_string=[]}) = stay
 fINTER stay = fINTER . fEXECUTE . fFIND . fWORD . fBL $ stay
 
-fWORD :: FState -> FState
-fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
-            , input_string = str' }
-    where word  = takeWhile (/= delim) (input_string s)
-          str'  = drop (1 + length word) (input_string s)
-          delim = getChar (datastack s)
-          getChar (FStr c:stk) = head c
-
--- pattern match into the dictionary here!
-fFIND :: FState -> FState
-fFIND s = s { datastack = dFIND (datastack s)(dictionary s) } where
-    dFIND [] _          = []
-    dFIND (FStr x:xs) d = (matchDict):xs
-        where matchIt :: [FStackItem]
-              matchIt = [ fn | (name, fn) <- d
-                             , name == x ]
-              matchDict = case matchIt of
-                        []  -> FNum (read x)
-                        fun -> head fun
-
 fEXECUTE :: FState -> FState
 fEXECUTE s@(FState {datastack=(FNum x:xs)}) = s
 fEXECUTE s@(FState {datastack=(FFn  x:xs)}) = x s {
@@ -67,6 +47,16 @@ fEXECUTE s@(FState {datastack=(FCFn x:rest)}) =
           comp_proc (f:fs) st = comp_proc fs $ fEXECUTE st {
             datastack = f : datastack st}
 
+--fCOLON :: FState -> FState
+fCOLON = fLEFTBRAK . fWORD . fBL
+
+
+
+--fCOLON s = s { dictionary = colonWord : dictionary s
+--             , compile_flag = True }
+--    where colonWord :: FDictEntry
+--          colonWord = (newWord, FCFn [])
+--          newWord s = fWORD . FBL $ s
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
 
@@ -89,5 +79,6 @@ fEXECUTE s@(FState {datastack=(FCFn x:rest)}) =
 --   @ DUP
 --   2 11 23 WIN?
 --   SWAP
---   5 11 17 WIN?
---   OR ;
+
+
+
