@@ -12,6 +12,7 @@ data FState = FState
             , input_string :: FInput
             , output_string :: FOutput
             , dictionary :: FDict
+            , compile_flag :: FCFlag
             } deriving (Show)
 
 -- Type aliases
@@ -20,6 +21,7 @@ type FOutput = String
 type FDataStack = [FStackItem]
 type FDictEntry = (String, FStackItem) --FStackItem is of type FCFn
 type FDict = [FDictEntry]
+type FCFlag = Bool
 type FCFn = [FStackItem]
 
 -- Stack content options
