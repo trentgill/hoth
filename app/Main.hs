@@ -25,6 +25,7 @@ repl state = do
                            }
     let retState = fQUIT inputState
     putStrLn (get_outstr retState)
+    --print(retState)
     repl retState 
 
 
