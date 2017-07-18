@@ -155,7 +155,7 @@ fEXECUTE :: FState -> FState
 fEXECUTE s@(FState {datastack = (FNum x:xs)}) = s
 fEXECUTE s@(FState {datastack = (FFn  x:xs)}) = x s {
     datastack = stack_pop $ datastack s }
-fEXECUTE s@(FState {datastack = (FCFn x:reset)}) =
+fEXECUTE s@(FState {datastack = (FCFn x:xs)}) =
     composite x s {datastack = stack_pop $ datastack s}
     where composite :: [FStackItem] -> FState -> FState
           composite ([])   st = st
@@ -181,8 +181,7 @@ fFIND s = s { datastack = dFIND (datastack s)(dictionary s)  }
                             []  -> FNum (read x)
                             fun -> head fun
 
---compile settings
-
+--compilation
 fCOMPILE :: FState -> FState
 fCOMPILE s = s
 
@@ -199,6 +198,11 @@ fCREATE s@(FState {datastack = (FStr name:xs)}) =
     where coWord :: FDictEntry
           coWord = ( name
                    , FCFn [] )
+
+-- IMMEDIATE
+fPAREN :: FState -> FState
+fPAREN = stack_op(stack_pop) . fWORD . stack_op(FStr ")" :)
+
 
 
 --COMPOSITE WORDS
