@@ -183,8 +183,7 @@ fRITEBRAK s = s { compile_flag = True }
 fCOLON :: [FStackItem]
 fCOLON = [ FFn fBL
          , FFn fWORD
-         , FFn fRITEBRAK
-         ]
+         , FFn fRITEBRAK ]
 
 fSQUARED :: [FStackItem]
 fSQUARED = [ FFn fDUP
