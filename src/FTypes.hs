@@ -29,9 +29,11 @@ data FStackItem = FNum Integer
                 | FStr String
                 | FFn  (FState -> FState)
                 | FCFn [FStackItem]
+                | FCFlag Bool
 
 instance Show FStackItem where
     show (FNum x) = show x
+    show (FCFlag x) = show x
     show (FStr x) = x
     show (FFn  x) = "<function>"
     show (FCFn x) = "[composite fn]"

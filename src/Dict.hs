@@ -32,8 +32,8 @@ native_dict = [ (".S"   ,False, FFn fDOTESS   )
               , ("TUCK" ,False, FFn fTUCK     )
               , ("WORD" ,False, FFn fWORD     )
               , ("FIND" ,False, FFn fFIND     )
-              , ("["    ,False, FFn fLEFTBRAK )
-              , ("]"    ,True,  FFn fRITEBRAK )
+              , ("["    ,True , FFn fLEFTBRAK )
+              , ("]"    ,False, FFn fRITEBRAK )
               , (":"    ,False, FCFn fCOLON   )
               , ("SQUARED",False, FCFn fSQUARED)
               , ("DBL"  ,False, FCFn [FFn fDUP, FFn fADD])
@@ -149,7 +149,7 @@ fQUIT s@(FState {compile_flag = False}) = fQUIT . fINTERPRET $ s
 
 --interpret and parse
 fINTERPRET :: FState -> FState
-fINTERPRET = fEXECUTE . fFIND . fWORD . fBL
+fINTERPRET = fEXECUTE . stack_op(stack_pop) . fFIND . fWORD . fBL
 
 fEXECUTE :: FState -> FState
 fEXECUTE s@(FState {datastack = (FNum x:xs)}) = s
@@ -171,19 +171,42 @@ fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
           getChar (FStr c:stk) = head c
 
 fFIND :: FState -> FState
-fFIND s = s { datastack = dFIND (datastack s)(dictionary s)  }
+fFIND s = s { datastack = dFIND (datastack s) (dictionary s)  }
     where dFIND [] _          = []
-          dFIND (FStr x:xs) d = (matchDict):xs
+          dFIND (FStr x:xs) d = (matchFlag):(matchDict):xs
             where matchIt :: [FStackItem]
                   matchIt = [ fn | (name, flag, fn) <- d
                                  , name == x ]
                   matchDict = case matchIt of
                             []  -> FNum (read x)
                             fun -> head fun
+                  matchF :: [FCFlag]
+                  matchF = [ flag | (name, flag, fn) <- d
+                                  , name == x ]
+                  matchFlag = case matchF of
+                            []  -> FCFlag False
+                            fon -> FCFlag (head fon)
 
 --compilation
 fCOMPILE :: FState -> FState
-fCOMPILE s = s
+fCOMPILE = fCEXE . fFIND . fWORD . fBL
+
+fCEXE :: FState -> FState
+fCEXE s@(FState {datastack = (FCFlag True:xs)}) =
+    fEXECUTE . stack_op(stack_pop) $ s
+fCEXE s@(FState {datastack = (x:FNum xx:xs)}) =
+    stack_op(stack_pop) $ s
+fCEXE s =
+    fCOMPILEC . stack_op(stack_pop) $ s
+
+fCOMPILEC :: FState -> FState
+fCOMPILEC s@(FState {dictionary = (x:xs)}) =
+    s { dictionary = (compileTo x):xs
+      , datastack = stack_pop $ datastack s}
+    where compileTo :: FDictEntry -> FDictEntry
+          compileTo (s, f, FCFn x) =
+              (s, f, FCFn (x ++ [newd]))
+          newd = head $ datastack s
 
 fLEFTBRAK :: FState -> FState
 fLEFTBRAK s = s { compile_flag = False }
