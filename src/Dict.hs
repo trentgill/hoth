@@ -140,7 +140,28 @@ fTUCK = stack_op(dTuck)
           dTuck (tos:nxt:stk) = tos:nxt:tos:stk
 
 
+--quit loop
+fQUIT :: FState -> FState
+fQUIT s@(FState {input_string = []}) = s
+fQUIT s@(FState {compile_flag = True }) = fQUIT . fCOMPILE $ s
+fQUIT s@(FState {compile_flag = False}) = fQUIT . fINTERPRET $ s
+
+
 --interpret and parse
+fINTERPRET :: FState -> FState
+fINTERPRET = fEXECUTE . fFIND . fWORD . fBL
+
+fEXECUTE :: FState -> FState
+fEXECUTE s@(FState {datastack = (FNum x:xs)}) = s
+fEXECUTE s@(FState {datastack = (FFn  x:xs)}) = x s {
+    datastack = stack_pop $ datastack s }
+fEXECUTE s@(FState {datastack = (FCFn x:reset)}) =
+    composite x s {datastack = stack_pop $ datastack s}
+    where composite :: [FStackItem] -> FState -> FState
+          composite ([])   st = st
+          composite (f:fs) st = composite fs $ fEXECUTE st {
+            datastack = f : datastack st }
+
 fWORD :: FState -> FState
 fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
             , input_string = str' }
@@ -161,12 +182,23 @@ fFIND s = s { datastack = dFIND (datastack s)(dictionary s)  }
                             fun -> head fun
 
 --compile settings
+
+fCOMPILE :: FState -> FState
+fCOMPILE s = s
+
 fLEFTBRAK :: FState -> FState
 fLEFTBRAK s = s { compile_flag = False }
 
 fRITEBRAK :: FState -> FState
 fRITEBRAK s = s { compile_flag = True }
 
+fCREATE :: FState -> FState
+fCREATE s@(FState {datastack = (FStr name:xs)}) =
+    s { dictionary = coWord : dictionary s
+      , datastack  = stack_pop $ datastack s }
+    where coWord :: FDictEntry
+          coWord = ( name
+                   , FCFn [] )
 
 
 --COMPOSITE WORDS
@@ -180,10 +212,12 @@ fRITEBRAK s = s { compile_flag = True }
 --entered as text strings that use the compilation step
 --to add them to dictionary at haskell-compile time
 
+
 fCOLON :: [FStackItem]
 fCOLON = [ FFn fBL
          , FFn fWORD
-         , FFn fRITEBRAK ]
+         , FFn fRITEBRAK
+         , FFn fCREATE ]
 
 fSQUARED :: [FStackItem]
 fSQUARED = [ FFn fDUP
