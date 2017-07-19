@@ -36,8 +36,6 @@ native_dict = [ (".S"   ,False, FFn fDOTESS   )
               , ("]"    ,False, FFn fRITEBRAK )
               , (":"    ,False, FCFn fCOLON   )
               , (";"    ,True , FCFn fSEMIC   )
-              , ("SQUARED",False, FCFn fSQUARED)
-              , ("DBL"  ,False, FCFn [FFn fDUP, FFn fADD])
               ]
 
 -- printing
@@ -250,10 +248,6 @@ fCOLON = [ FFn fBL
 
 fSEMIC :: [FStackItem]
 fSEMIC = [ FFn fLEFTBRAK ]
-
-fSQUARED :: [FStackItem]
-fSQUARED = [ FFn fDUP
-           , FFn fSTAR ]
 
 --runtime compilation
 addCubed :: FState -> FState
