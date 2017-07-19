@@ -26,13 +26,11 @@ repl state = do
     let retState = fQUIT inputState
     putStrLn (get_outstr retState)
     --print(retState)
-    repl retState 
-
-
-get_outstr :: FState -> String
-get_outstr s@(FState {output_string=[]}) = "ok."
-get_outstr s = (output_string s)
-
+    repl retState
+    where
+        get_outstr :: FState -> String
+        get_outstr s@(FState {output_string=[]}) = "ok."
+        get_outstr s = (output_string s)
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
 
@@ -40,21 +38,10 @@ get_outstr s = (output_string s)
 --fQBRANCH, fBRANCH
 --fABORT
 
---fCOLON
---fSEMICOLON
-
 --Return stack operations: R> >R R@
 --Arithmetic/bitwise operations: MOD NEGATE OR AND INVERT XOR LSHIFT RSHIFT
 --Simple math: ABS
 --Comparators: = < <= > >= <>
 --Memory access: ! @ +! MOVE FILL
 --Console I/O: KEY EMIT
-
---example of colon word
--- : DIAGONAL?
---   @ DUP
---   2 11 23 WIN?
---   SWAP
-
-
 
