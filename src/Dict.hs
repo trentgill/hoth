@@ -127,10 +127,7 @@ fROT = stack_op(dRot)
           dRot (tos:nxt:thd:stk) = thd:tos:nxt:stk
 
 fNIP :: FState -> FState
-fNIP = stack_op(dNip)
-    where dNip []          = []
-          dNip (tos:[])    = tos: []
-          dNip (tos:_:stk) = tos:stk
+fNIP = fDROP . fSWAP
 
 fTUCK :: FState -> FState
 fTUCK = stack_op(dTuck)
