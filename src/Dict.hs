@@ -106,7 +106,6 @@ fDROP = stack_op(dDrop)
     where dDrop []      = []
           dDrop (_:stk) = stk
 
-
 fSWAP :: FState -> FState
 fSWAP = stack_op(dSwap)
     where dSwap []            = []
@@ -114,10 +113,7 @@ fSWAP = stack_op(dSwap)
           dSwap (tos:nxt:stk) = nxt:tos:stk
 
 fOVER :: FState -> FState
-fOVER = stack_op(dOver)
-    where dOver []            = []
-          dOver (tos:[])      = tos:[]
-          dOver (tos:nxt:stk) = nxt:tos:nxt:stk
+fOVER = fTUCK . fSWAP
 
 fROT :: FState -> FState
 fROT = stack_op(dRot)
@@ -130,10 +126,8 @@ fNIP :: FState -> FState
 fNIP = fDROP . fSWAP
 
 fTUCK :: FState -> FState
-fTUCK = stack_op(dTuck)
-    where dTuck []            = []
-          dTuck (tos:[])      = tos:tos:[]
-          dTuck (tos:nxt:stk) = tos:nxt:tos:stk
+fTUCK = fSWAP . fROT . fDUP
+
 
 
 --quit loop
