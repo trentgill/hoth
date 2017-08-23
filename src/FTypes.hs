@@ -23,6 +23,7 @@ type FDictEntry = (String, FCFlag, FStackItem) --FStackItem is of type FCFn
 type FDict = [FDictEntry]
 type FCFlag = Bool
 type FCFn = [FStackItem]
+type FList = [FStackItem]
 
 -- Stack content options
 data FStackItem = FNum Integer
@@ -30,6 +31,7 @@ data FStackItem = FNum Integer
                 | FFn  (FState -> FState)
                 | FCFn [FStackItem]
                 | FCFlag Bool
+                | FList [FStackItem]
 
 instance Show FStackItem where
     show (FNum x) = show x
@@ -37,4 +39,5 @@ instance Show FStackItem where
     show (FStr x) = x
     show (FFn  x) = "<function>"
     show (FCFn x) = "[composite fn]"
+    show (FList x) = show (head x) ++ show (tail x)
 
