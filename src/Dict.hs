@@ -139,7 +139,7 @@ fQUIT s@(FState {compile_flag = False}) = fQUIT . fINTERPRET $ s
 
 --interpret and parse
 fINTERPRET :: FState -> FState
-fINTERPRET = fEXECUTE . stack_op(stack_pop) . fFIND . fWORD . fBL
+fINTERPRET = fEXECUTE . fDROP . fFIND . fWORD . fBL
 
 fEXECUTE :: FState -> FState
 fEXECUTE s@(FState {datastack = (FNum x:xs)}) = s
@@ -183,11 +183,11 @@ fCOMPILE = fCEXE . fFIND . fWORD . fBL
 
 fCEXE :: FState -> FState
 fCEXE s@(FState {datastack = (FCFlag True:xs)}) =
-    fEXECUTE . stack_op(stack_pop) $ s
+    fEXECUTE . fDROP $ s
 fCEXE s@(FState {datastack = (x:FNum xx:xs)}) =
-    stack_op(stack_pop) $ s
+    fDROP $ s
 fCEXE s =
-    fCOMPILEC . stack_op(stack_pop) $ s
+    fCOMPILEC . fDROP $ s
 
 fCOMPILEC :: FState -> FState
 fCOMPILEC s@(FState {dictionary = (x:xs)}) =
@@ -215,8 +215,14 @@ fCREATE s@(FState {datastack = (FStr name:xs)}) =
 
 -- IMMEDIATE
 fPAREN :: FState -> FState
-fPAREN = stack_op(stack_pop) . fWORD . stack_op(FStr ")" :)
+fPAREN = fDROP . fWORD . stack_op(FStr ")" :)
 
+
+--lists
+--fBRACE :: FState -> FState
+--fBRACE = stack_op(pList) . fWORD . stack_op(FStr "}" :)
+--    where pList x:xs = newList : xs
+--newList x =l
 
 
 --COMPOSITE WORDS
