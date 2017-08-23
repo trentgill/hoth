@@ -152,6 +152,9 @@ fEXECUTE s@(FState {datastack = (FCFn x:xs)}) =
           composite (f:fs) st = composite fs $ fEXECUTE st {
             datastack = f : datastack st }
 
+-- composite is ENTER
+-- 151 is EXIT
+
 fWORD :: FState -> FState
 fWORD s = s { datastack = (FStr word):(stack_pop $ datastack s)
             , input_string = str' }
