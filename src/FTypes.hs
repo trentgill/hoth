@@ -13,6 +13,7 @@ data FState = FState
             , output_string :: FOutput
             , dictionary :: FDict
             , compile_flag :: FCFlag
+            , return_stack :: FRStack
             } deriving (Show)
 
 -- Type aliases
@@ -23,6 +24,7 @@ type FDictEntry = (String, FCFlag, FStackItem) --FStackItem is of type FCFn
 type FDict = [FDictEntry]
 type FCFlag = Bool
 type FCFn = [FStackItem]
+type FRStack = [FState] --what should this type be?!
 type FList = [FStackItem]
 
 -- Stack content options

@@ -15,6 +15,7 @@ main = repl FState { datastack = []
                    , output_string = ""
                    , dictionary = native_dict
                    , compile_flag = False
+                   , return_stack = []
                    }
 
 repl :: FState -> IO ()
