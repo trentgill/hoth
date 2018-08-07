@@ -4,34 +4,43 @@ module Main where
 import System.Environment
 import Control.Monad
 import Data.List
-import Control.Arrow
 import Data.Char
 import Dict
 import FTypes
+import System.IO -- hSetBuffering
+
+hoth_defs = ": SQ (     a -- a^2 ) DUP * ;          "
+         ++ ": CUBED (  a -- a^3 ) DUP DUP * * ;    "
+         ++ ": NIP (  a b -- a ) SWAP DROP ;        "
+         ++ ": TUCK ( a b -- b a b ) DUP ROT SWAP ; "
+         ++ ": OVER ( a b -- a b a ) SWAP TUCK ;    "
 
 main :: IO ()
-main = repl FState { datastack = []
-                   , input_string = ""
-                   , output_string = ""
-                   , dictionary = native_dict
-                   , compile_flag = False
-                   , return_stack = []
-                   }
+main = repl . fQUIT $ FState { datastack     = []
+                             , input_string  = hoth_defs
+                             , output_string = ""
+                             , dictionary    = native_dict
+                             , compile_flag  = False
+                             , return_stack  = []
+                             , quit_flag     = False
+                             }
 
 repl :: FState -> IO ()
 repl state = do
-    interpret_this <- getLine
-    let inputState = state { input_string = interpret_this
+    hSetBuffering stdout NoBuffering
+    putStr "> "
+    accept_me <- getLine
+    let inputState = state { input_string  = accept_me
                            , output_string = ""
                            }
-    let retState = fQUIT inputState
-    putStrLn (get_outstr retState)
-    --print(retState)
-    repl retState
+    let newState = fQUIT . fACCEPT accept_me $ state
+    putStrLn (output_string newState)
+    if quit_flag newState
+        then return ()
+        else repl . clearOutString $ newState
     where
-        get_outstr :: FState -> String
-        get_outstr s@(FState {output_string=[]}) = "ok."
-        get_outstr s = (output_string s)
+        fACCEPT string st = st { input_string = string }
+        clearOutString s = s { output_string = "" }
 
 --fDOLITERAL :: FPC -> FDataStack -> FDataStack
 
