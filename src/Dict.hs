@@ -307,24 +307,29 @@ fDOLIT s = fMOVE_PC (Just (FNum 1)) --skip literal
                                        . output_append "!DOLIT"
                                        $ s
 
--- composite is ENTER
--- 151 is EXIT
-
--- consume input, drop fBL, add FStr string onto stack
 fWORD :: FState -> FState
-fWORD s = stack_op(FStr word :)
-       -- . output_append ("\n\"" ++ word ++ "\"\n")
-        . fDROP
-        $ s { input_string = str' }
+fWORD s@(FState {datastack = []}) = fABORT s
+fWORD s = stack_op(FStr parsed_word :)
+         . fDROP
+         $ s { input_string = string_remainder }
     where
-        word  = takeWhile (/= delim)
-              $ dropWhile (== delim)
-              $ input_string s
-        takeS = takeWhile (== delim) $ input_string s
-        str'  = drop (1 + length word + length takeS)
-                     (input_string s)
-        delim = getChar (datastack s)
+        delim = getChar . datastack $ s
         getChar (FStr c:stk) = head c
+        match_delim c | c == delim = True
+                      | c == '\n'  = True
+                      | otherwise  = False
+        leading_whitespace = length
+                           . takeWhile (match_delim)
+                           $ input_string s
+        parsed_word = takeWhile (not . match_delim)
+                    . drop ( leading_whitespace )
+                    $ input_string s
+        string_remainder = drop ( 1 --trailing character
+                                + length parsed_word
+                                + leading_whitespace
+                                ) (input_string s)
+
+
 
 fFindDictEntry :: String -> FDict -> Maybe FDictEntry
 fFindDictEntry str d = let m = matchDictEntry d str
