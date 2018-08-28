@@ -9,19 +9,13 @@ import Dict
 import FTypes
 import System.IO -- hSetBuffering
 
-hoth_defs = ": SQ (     a -- a^2 ) DUP * ;          "
-         ++ ": CUBED (  a -- a^3 ) DUP DUP * * ;    "
-         ++ ": NIP (  a b -- a ) SWAP DROP ;        "
-         ++ ": TUCK ( a b -- b a b ) DUP ROT SWAP ; "
-         ++ ": OVER ( a b -- a b a ) SWAP TUCK ;    "
-         ++ ": CASA (   a -- ?13 ) IF SQ THEN . ; "
-         ++ ": CASE (   a -- ?13 ) IF SQ ELSE CUBED THEN . ; "
-
---CASE = [ FFn fQBRANCH, FNum 4
---       , FNum 13
---       , FFn fBRANCH, FNum 2
---       , FNum 1
---       , FFn fDOT]
+hoth_defs = ": SQ (     a -- a^2 ) DUP * ;                 "
+         ++ ": CUBED (  a -- a^3 ) DUP DUP * * ;           "
+         ++ ": NIP (  a b -- a ) SWAP DROP ;               "
+         ++ ": TUCK ( a b -- b a b ) DUP ROT SWAP ;        "
+         ++ ": OVER ( a b -- a b a ) SWAP TUCK ;           "
+         ++ ": NEGATE ( a -- -a ) -1 * ;                   "
+         ++ ": ABS  (   a -- |a| ) DUP <0 IF NEGATE THEN ; "
 
 main :: IO ()
 main = repl . fQUIT $ FState { datastack     = []

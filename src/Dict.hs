@@ -16,10 +16,6 @@ output_append :: FOutput -> FState -> FState
 output_append str s = s { output_string = (output_string s) ++ str }
 
 -- DICTIONARY
-
--- to be fixed / changed
--- WORD must discard leading whitespace
-
 -- to be added
 -- FORGET (forgets all words defined since the named word)
 -- ." (prints until it encounters ")
@@ -29,9 +25,8 @@ output_append str s = s { output_string = (output_string s) ++ str }
 -- MOD (n1 n2 -- rem)
 -- /MOD (n1 n2 -- rem quot)
 -- INCLUDE (loads & interprets a text file from disk)
--- = < > 0= 0< 0>
+-- = < > 0=
 -- INVERT (inverts a flag)
--- ?DUP (dupes top stack value only if it's a TRUE flag)
 -- ABORT" (if flag true, clear stack, print name of last interp'd word)
 -- ?STACK (true if stack is EMPTY)
 --
@@ -50,6 +45,7 @@ output_append str s = s { output_string = (output_string s) ++ str }
 -- map of native functions
 -- must manually add new native words here :/
 
+-- only words able to called at RUNTIME
 native_dict = [ (".S"        ,Not, FFn  fDOTESS    )
               , ("."         ,Not, FFn  fDOT       )
               , ("WORDS"     ,Not, FFn  fWORDS     )
@@ -67,6 +63,7 @@ native_dict = [ (".S"        ,Not, FFn  fDOTESS    )
               , ("IMMEDIATE" ,Not, FFn  fIMMEDIATE )
               , ("CREATE"    ,Not, FFn  fCREATE    )
               , ("DROP"      ,Not, FFn  fDROP      )
+              , ("DOLIT"     ,Imm, FFn  fDOLIT     )
               , ("*"         ,Not, FFn  fSTAR      )
               , ("+"         ,Not, FFn  fADD       )
               , ("-"         ,Not, FFn  fSUB       )
@@ -79,8 +76,6 @@ native_dict = [ (".S"        ,Not, FFn  fDOTESS    )
               , ("ROT"       ,Not, FFn  fROT       )
               , (">0"        ,Not, FFn  fGTZ       )
               , ("<0"        ,Not, FFn  fLTZ       )
-              , ("?BRANCH"   ,Not, FFn  fQBRANCH   )
-              , ("BRANCH"    ,Not, FFn  fBRANCH    )
               , ("IF"        ,Imm, FCFn fIF        )
               , ("ELSE"      ,Imm, FCFn fELSE      )
               , ("THEN"      ,Imm, FCFn fTHEN      )
@@ -180,25 +175,25 @@ fROT = stack_op(dRot)
           dRot (tos:nxt:[])      = tos:nxt:[] --error
           dRot (tos:nxt:thd:stk) = thd:tos:nxt:stk
 
-fGTZ :: FState -> FState
-fGTZ = stack_op(dGTZ)
-    where
-        dGTZ [] = [] --error
-        dGTZ (FNum n:stk)
-            | n > 0     = FBool True : stk
-            | otherwise = FBool False : stk
-        dGTZ (FIWord i:stk) = case i of
-                                  Not -> FBool True : stk
-                                  otherwise -> FBool False : stk
-
 fLTZ :: FState -> FState
 fLTZ = stack_op(dLTZ)
     where
         dLTZ [] = [] --error
         dLTZ (FNum n:stk)
-            | n < 0     = FBool True : stk
+            | n > 0     = FBool True : stk
             | otherwise = FBool False : stk
         dLTZ (FIWord i:stk) = case i of
+                                  Not -> FBool True : stk
+                                  otherwise -> FBool False : stk
+
+fGTZ :: FState -> FState
+fGTZ = stack_op(dGTZ)
+    where
+        dGTZ [] = [] --error
+        dGTZ (FNum n:stk)
+            | n < 0     = FBool True : stk
+            | otherwise = FBool False : stk
+        dGTZ (FIWord i:stk) = case i of
                                   Imm -> FBool True : stk
                                   otherwise -> FBool False : stk
 
@@ -542,7 +537,7 @@ fCOMPILE = [ FFn fBL
            , FFn fFIND
            , FFn fQDUP
            , FFn fQBRANCH , FNum 10
-                , FFn fLTZ
+                , FFn fGTZ
                 , FFn fQBRANCH , FNum 4
                     , FFn fCOMMA
                 , FFn fBRANCH , FNum 2
