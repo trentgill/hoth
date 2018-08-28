@@ -30,17 +30,7 @@ output_append str s = s { output_string = (output_string s) ++ str }
 -- ABORT" (if flag true, clear stack, print name of last interp'd word)
 -- ?STACK (true if stack is EMPTY)
 --
--- 1+
--- 1-
--- 2+
--- 2-
--- 2* (left shift)
--- 2/ (right shift)
---
--- ABS
--- NEGATE
 -- >R and R> (move from stack to rstack then back)
--- */ (multiplies then divides. for fractions)
 
 -- map of native functions
 -- must manually add new native words here :/
