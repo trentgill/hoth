@@ -83,7 +83,8 @@ native_dict = [ (".S"        ,Not, FFn  fDOTESS    )
               , ("BRANCH"    ,Not, FFn  fBRANCH    )
               , ("IF"        ,Imm, FCFn fIF        )
               , ("ELSE"      ,Imm, FCFn fELSE      )
-              , ("THEN"      ,Imm, FFn  fTHEN      )
+              , ("THEN"      ,Imm, FCFn fTHEN      )
+              , ("!"         ,Not, FFn  fSETMEM    )
               , ("HERE"      ,Not, FFn  fHERE      )
               , (">NUM"      ,Not, FFn  fTONUM     )
               , ("ABORT"     ,Not, FFn  fABORT     )
@@ -207,7 +208,7 @@ fLTZ = stack_op(dLTZ)
 fQUIT :: FState -> FState
 fQUIT s@(FState {input_string = ""   }) = output_append("ok.\n") $ s
 fQUIT s@(FState {compile_flag = True }) = fENTER fCOMPILE
-                                       -- . output_append("<compile>")
+                                       -- . output_append("<compile>\n")
                                         $ s
 fQUIT s@(FState {compile_flag = False}) = fENTER fINTERPRET
                                        -- . output_append("<interpret>")
@@ -387,7 +388,7 @@ fDictEntryLength :: FState -> Int
 fDictEntryLength s@(FState {dictionary = (x:xs)})
       = case makeFCFn . getDictFn $ x of
              Just fcfn -> length fcfn
-             Nothing   -> 0
+             Nothing   -> -1
     where
         makeFCFn :: FStackItem -> Maybe FCFn
         makeFCFn (FCFn f) = Just f
@@ -398,32 +399,28 @@ fDictEntryLength s@(FState {dictionary = (x:xs)})
 fHERE :: FState -> FState
 fHERE s = stack_op((FNum . fDictEntryLength $ s) :) $ s
 
--- pop old fHERE
--- calc diff between &top-of-dict and &dict-arg
--- save value into &dict-arg
-fTHEN :: FState -> FState
-fTHEN s = fSETARG -- set &oldHERE (duped) to TOS
-        . fSUB  -- difference between old & new HERE -> the arg to save
-        . fHERE   -- find new HERE location
-        . fDUP    -- copy old HERE
-        $ s
+fTHEN :: FCFn
+fTHEN = [ FFn fDUP
+        , FFn fHERE
+        , FFn fSUB
+        , FFn fSWAP
+        , FFn fSETMEM
+        ]
 
-fSETARG :: FState -> FState
-fSETARG s@(FState {dictionary = (x:xs)}) = fDROP
+-- !
+fSETMEM :: FState -> FState
+fSETMEM s@(FState {dictionary = (x:xs)}) = fDROP
                                          . fDROP
-                                         . fDOTESS
                                          $ s { dictionary = (setDictArg x):xs }
     where
         setDictArg :: FDictEntry -> FDictEntry
         setDictArg (name,flag,fn) =
-            let (x,_:ys) = splitAt (fAsFNum . fGetTOS $ s) (fAsFCFn fn)
+            let (x,_:ys) = splitAt ((fAsFNum . fGetTOS $ s)) (fAsFCFn fn)
             in  (name,flag, FCFn (x ++ FNum (fAsFNum . fGetTOS2 $ s):ys))
 
 -- unsafe type conversions! extend with Maybe's
 fAsFNum :: FStackItem -> FNum
 fAsFNum (FNum x) = x
-fAsFNum (FNull) = -2
---fAsFNum _        = -1
 
 fAsString :: FStackItem -> FStr
 fAsString (FStr f) = f
@@ -572,14 +569,10 @@ fELSE :: FCFn
 fELSE = [ FFn  fDOLIT , FFn fBRANCH , FFn fCOMMA
         , FCFn fPOSTPONE           -- save place for BRANCH arg
         , FFn  fSWAP
-        , FFn  fTHEN
+        , FCFn fTHEN
         ]
 
 fPOSTPONE :: FCFn
-fPOSTPONE = [ FFn fDOLIT, FNull , FFn fCOMMA -- placeholder for arg
-            , FFn fHERE
+fPOSTPONE = [ FFn fHERE
+            , FFn fDOLIT, FNull , FFn fCOMMA -- placeholder for arg
             ]
--- DOLIT puts next word onto TOS
--- COMMA puts TOS into Dictionary
--- HERE puts &Dict onto TOS
--- POSTPONE saves a space in Dict and saves HERE

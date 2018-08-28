@@ -14,8 +14,8 @@ hoth_defs = ": SQ (     a -- a^2 ) DUP * ;          "
          ++ ": NIP (  a b -- a ) SWAP DROP ;        "
          ++ ": TUCK ( a b -- b a b ) DUP ROT SWAP ; "
          ++ ": OVER ( a b -- a b a ) SWAP TUCK ;    "
-         ++ ": CASE (   a -- ?13 ) IF SQ THEN . ; "
-         -- ++ ": CASE (   a -- ?13 ) IF SQ ELSE CUBED THEN . ; "
+         ++ ": CASA (   a -- ?13 ) IF SQ THEN . ; "
+         ++ ": CASE (   a -- ?13 ) IF SQ ELSE CUBED THEN . ; "
 
 --CASE = [ FFn fQBRANCH, FNum 4
 --       , FNum 13
