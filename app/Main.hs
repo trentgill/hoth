@@ -9,24 +9,10 @@ import Dict
 import FTypes
 import System.IO -- hSetBuffering
 
-hoth_defs = ": SQ (     a -- a^2 ) DUP * ;                 "
-         ++ ": CUBED (  a -- a^3 ) DUP DUP * * ;           "
-         ++ ": NIP (  a b -- a ) SWAP DROP ;               "
-         ++ ": TUCK ( a b -- b a b ) DUP ROT SWAP ;        "
-         ++ ": OVER ( a b -- a b a ) SWAP TUCK ;           "
-         ++ ": NEGATE ( a -- -a ) -1 * ;                   "
-         ++ ": ABS  (   a -- |a| ) DUP <0 IF NEGATE THEN ; "
-         ++ ": */ ( a b c -- a*b/c ) SWAP ROT * / ;        "
-         ++ ": *PI ( a -- 3a/4 ) 3142 1000 */ ;            "
-         ++ ": 1+ ( a -- a+1 ) 1 + ;                       "
-         ++ ": 1- ( a -- a-1 ) 1 SWAP - ;                  "
-         ++ ": 2+ ( a -- a+2 ) 2 + ;                       "
-         ++ ": 2- ( a -- a-2 ) 2 SWAP - ;                  "
-         ++ ": 2* ( a -- a*2 ) 2 * ;                       "
-         ++ ": 2/ ( a -- a/2 ) 2 SWAP / ;                  "
-
 main :: IO ()
-main = repl . fQUIT $ FState { datastack     = []
+main = do
+        hoth_defs <- readFile "src/hoth_lib.fth"
+        repl . fQUIT $ FState { datastack     = []
                              , input_string  = hoth_defs
                              , output_string = ""
                              , dictionary    = native_dict
