@@ -64,8 +64,12 @@ native_dict = [ (".S"        ,Not, FFn  fDOTESS    )
               , ("?DUP"      ,Not, FFn  fQDUP      )
               , ("SWAP"      ,Not, FFn  fSWAP      )
               , ("ROT"       ,Not, FFn  fROT       )
-              , (">0"        ,Not, FFn  fGTZ       )
-              , ("<0"        ,Not, FFn  fLTZ       )
+              , (">"         ,Not, FFn  fGT        )
+              , ("<"         ,Not, FFn  fLT        )
+              , ("="         ,Not, FFn  fEQ        )
+              , ("AND"       ,Not, FFn  fAND       )
+              , ("OR"        ,Not, FFn  fOR        )
+              , ("NOT"       ,Not, FFn  fNOT       )
               , ("IF"        ,Imm, FCFn fIF        )
               , ("ELSE"      ,Imm, FCFn fELSE      )
               , ("THEN"      ,Imm, FCFn fTHEN      )
@@ -165,27 +169,66 @@ fROT = stack_op(dRot)
           dRot (tos:nxt:[])      = tos:nxt:[] --error
           dRot (tos:nxt:thd:stk) = thd:tos:nxt:stk
 
-fLTZ :: FState -> FState
-fLTZ = stack_op(dLTZ)
+-- Comparison primitives
+fNOT :: FState -> FState
+fNOT = stack_op(truthCompliment)
     where
-        dLTZ [] = [] --error
-        dLTZ (FNum n:stk)
-            | n > 0     = FBool True : stk
-            | otherwise = FBool False : stk
-        dLTZ (FIWord i:stk) = case i of
-                                  Not -> FBool True : stk
-                                  otherwise -> FBool False : stk
+        truthCompliment :: FDataStack -> FDataStack
+        truthCompliment [] = [] --error
+        truthCompliment (FBool x:stk) = (FBool $ not x) : stk
+        truthCompliment (FNum x:stk) = case x of
+                                           0 -> FBool True : stk
+                                           otherwise -> FBool False : stk
+        truthCompliment (FIWord x:stk) = case x of
+                                             Not -> FBool True : stk
+                                             otherwise -> FBool False : stk
 
-fGTZ :: FState -> FState
-fGTZ = stack_op(dGTZ)
-    where
-        dGTZ [] = [] --error
-        dGTZ (FNum n:stk)
-            | n < 0     = FBool True : stk
-            | otherwise = FBool False : stk
-        dGTZ (FIWord i:stk) = case i of
-                                  Imm -> FBool True : stk
-                                  otherwise -> FBool False : stk
+compareN :: (FNum -> FNum -> Bool) -> FDataStack -> FDataStack
+compareN _ []     = [] --error
+compareN _ (_:[]) = [] --error
+compareN op (n:nn:stk)
+    | op (itemToNum n) (itemToNum nn) = FBool True : stk
+    | otherwise                       = FBool False : stk
+
+compareB :: (Bool -> Bool -> Bool) -> FDataStack -> FDataStack
+compareB _ []     = [] --error
+compareB _ (_:[]) = [] --error
+compareB op (n:nn:stk)
+    | op (itemToBool n) (itemToBool nn) = FBool True : stk
+    | otherwise                         = FBool False : stk
+
+fLT :: FState -> FState
+fLT = stack_op(compareN (<))
+
+fGT :: FState -> FState
+fGT = stack_op(compareN (>))
+
+fEQ :: FState -> FState
+fEQ = stack_op(compareN (==))
+
+fOR :: FState -> FState
+fOR = stack_op(compareB (||))
+
+fAND :: FState -> FState
+fAND = stack_op(compareB (&&))
+
+itemToNum :: FStackItem -> FNum
+itemToNum (FNum x)   = x
+itemToNum (FBool x)  = case x of
+                           True  -> 1
+                           False -> 0
+itemToNum (FIWord x) = case x of
+                           Not       -> 0
+                           otherwise -> 1
+
+itemToBool :: FStackItem -> FBool
+itemToBool (FBool x)  = x
+itemToBool (FNum x)   = case x of
+                           0         -> False
+                           otherwise -> True
+itemToBool (FIWord x) = case x of
+                           Not       -> False
+                           otherwise -> True
 
 --quit loop
 -- add support for Maybe here where Nothing means ABORT
@@ -389,14 +432,6 @@ fDictEntryLength s@(FState {dictionary = (x:xs)})
 fHERE :: FState -> FState
 fHERE s = stack_op((FNum . fDictEntryLength $ s) :) $ s
 
-fTHEN :: FCFn
-fTHEN = [ FFn fDUP
-        , FFn fHERE
-        , FFn fSUB
-        , FFn fSWAP
-        , FFn fSETMEM
-        ]
-
 -- !
 fSETMEM :: FState -> FState
 fSETMEM s@(FState {dictionary = (x:xs)}) = fDROP
@@ -531,8 +566,8 @@ fCOMPILE = [ FFn fBL
            , FFn fWORD
            , FFn fFIND
            , FFn fQDUP
-           , FFn fQBRANCH , FNum 10
-                , FFn fGTZ
+           , FFn fQBRANCH , FNum 12
+                , FFn fDOLIT, FNum 0 , FFn fLT
                 , FFn fQBRANCH , FNum 4
                     , FFn fCOMMA
                 , FFn fBRANCH , FNum 2
@@ -548,12 +583,23 @@ fLITERAL = [ FFn fDOLIT , FFn fDOLIT , FFn fCOMMA
            , FFn fCOMMA
            ]
 
--- compiles QBRANCH and FNull (arg) to dictionary
--- leaves fHERE on datastack
+fPOSTPONE :: FCFn
+fPOSTPONE = [ FFn fHERE
+            , FFn fDOLIT, FNull , FFn fCOMMA -- placeholder for arg
+            ]
+
 fIF :: FCFn
 fIF = [ FFn  fDOLIT , FFn fQBRANCH , FFn fCOMMA
       , FCFn fPOSTPONE             -- save place for QBRANCH arg
       ]
+
+fTHEN :: FCFn
+fTHEN = [ FFn fDUP
+        , FFn fHERE
+        , FFn fSUB
+        , FFn fSWAP
+        , FFn fSETMEM
+        ]
 
 fELSE :: FCFn
 fELSE = [ FFn  fDOLIT , FFn fBRANCH , FFn fCOMMA
@@ -561,8 +607,3 @@ fELSE = [ FFn  fDOLIT , FFn fBRANCH , FFn fCOMMA
         , FFn  fSWAP
         , FCFn fTHEN
         ]
-
-fPOSTPONE :: FCFn
-fPOSTPONE = [ FFn fHERE
-            , FFn fDOLIT, FNull , FFn fCOMMA -- placeholder for arg
-            ]

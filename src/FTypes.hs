@@ -30,6 +30,7 @@ type FCFn = [FStackItem]
 type FList = [FStackItem]
 type FNum = Int
 type FStr = String
+type FBool = Bool
 
 data FIWord = Imm
             | Not
