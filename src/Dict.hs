@@ -567,7 +567,7 @@ fCOMPILE = [ FFn fBL
            , FFn fFIND
            , FFn fQDUP
            , FFn fQBRANCH , FNum 12
-                , FFn fDOLIT, FNum 0 , FFn fLT
+                , FFn fDOLIT, FNum 0, FFn fLT
                 , FFn fQBRANCH , FNum 4
                     , FFn fCOMMA
                 , FFn fBRANCH , FNum 2

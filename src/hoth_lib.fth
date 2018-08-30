@@ -1,8 +1,6 @@
 ( Forth Standard Library )
 ( Words are implemented in Forth wherever possible )
 
-1 2 3 . . .
-
 ( Stack Manipulations )
 : NIP ( a b -- a ) SWAP DROP ;
 : TUCK ( a b -- b a b ) DUP ROT SWAP ;
@@ -11,10 +9,10 @@
 : ?DUP ( a b -- a ?a ) IF DUP THEN ;
 
 ( Comparison Words )
-: <0 ( a -- b ) 0 OVER < ;
-: >0 ( a -- b ) 0 OVER > ;
-: >= ( a b -- c b a ) 2DUP < NOT ;
-: <= ( a b -- c b a ) 2DUP > NOT ;
+: <0 ( a -- f ) 0 OVER < ;
+: >0 ( a -- f ) 0 OVER > ;
+: >= ( a b -- f b a ) 2DUP < NOT ;
+: <= ( a b -- f b a ) 2DUP > NOT ;
 
 ( Some simple math words )
 : SQ ( a -- a^2 ) DUP * ;
@@ -23,7 +21,8 @@
 : ABS  ( a -- |a| ) DUP <0 IF NEGATE THEN ;
 : */ ( a b c -- a*b/c ) SWAP ROT * / ;
 : *PI ( a -- 3a/4 ) 3142 1000 */ ;
-: MIN ( ) 2DUP < IF DROP ELSE SWAP DROP THEN ;
+: MIN ( a b -- c ) 2DUP < IF DROP ELSE SWAP DROP THEN ;
+: MAX ( a b -- c ) 2DUP > IF DROP ELSE SWAP DROP THEN ;
 
 ( Partial Arithmetic Functions )
 : 1+ ( a -- a+1 ) 1 + ;
