@@ -20,7 +20,7 @@
 : NEGATE ( a -- -a ) -1 * ;
 : ABS  ( a -- |a| ) DUP <0 IF NEGATE THEN ;
 : */ ( a b c -- a*b/c ) SWAP ROT * / ;
-: *PI ( a -- 3a/4 ) 3142 1000 */ ;
+: PI* ( a -- 3a/4 ) 355 113 */ ;
 : MIN ( a b -- c ) 2DUP < IF DROP ELSE SWAP DROP THEN ;
 : MAX ( a b -- c ) 2DUP > IF DROP ELSE SWAP DROP THEN ;
 
