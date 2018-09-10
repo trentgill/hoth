@@ -11,7 +11,7 @@ import System.IO -- hSetBuffering
 
 main :: IO ()
 main = do
-        hoth_defs <- readFile "src/hoth_lib.fth"
+        hoth_defs <- readFile "src/hoth_lib.ft"
         repl . fQUIT $ FState { datastack     = []
                              , input_string  = hoth_defs
                              , output_string = ""
